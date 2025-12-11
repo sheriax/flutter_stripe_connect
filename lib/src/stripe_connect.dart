@@ -1,0 +1,99 @@
+import 'dart:async';
+import 'package:flutter/services.dart';
+
+typedef ClientSecretProvider = Future<String> Function();
+
+class StripeConnect {
+  static const MethodChannel _channel = MethodChannel('flutter_stripe_connect');
+
+  static StripeConnect? _instance;
+  static StripeConnect get instance => _instance ??= StripeConnect._();
+
+  StripeConnect._();
+
+  ClientSecretProvider? _clientSecretProvider;
+
+  /// Initialize Stripe Connect with your publishable key
+  /// [publishableKey] - Your Stripe publishable key
+  /// [clientSecretProvider] - Async function that fetches a client secret from your server
+  Future<void> initialize({
+    required String publishableKey,
+    required ClientSecretProvider clientSecretProvider,
+  }) async {
+    _clientSecretProvider = clientSecretProvider;
+
+    _channel.setMethodCallHandler(_handleMethodCall);
+
+    await _channel.invokeMethod('initialize', {
+      'publishableKey': publishableKey,
+    });
+  }
+
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'fetchClientSecret':
+        if (_clientSecretProvider == null) {
+          throw Exception('Client secret provider not set');
+        }
+        return await _clientSecretProvider!();
+      default:
+        throw MissingPluginException('Unknown method ${call.method}');
+    }
+  }
+
+  /// Logout and clear the current session
+  Future<void> logout() async {
+    await _channel.invokeMethod('logout');
+  }
+}
+
+/// Appearance configuration for Stripe Connect components
+class ConnectAppearance {
+  final String? fontFamily;
+  final ConnectColors? colors;
+  final double? cornerRadius;
+
+  const ConnectAppearance({this.fontFamily, this.colors, this.cornerRadius});
+
+  Map<String, dynamic> toMap() => {
+    if (fontFamily != null) 'fontFamily': fontFamily,
+    if (colors != null) 'colors': colors!.toMap(),
+    if (cornerRadius != null) 'cornerRadius': cornerRadius,
+  };
+}
+
+class ConnectColors {
+  final String? primary;
+  final String? background;
+  final String? text;
+  final String? secondaryText;
+  final String? border;
+  final String? actionPrimaryText;
+  final String? actionSecondaryText;
+  final String? formBackground;
+  final String? formHighlightBorder;
+
+  const ConnectColors({
+    this.primary,
+    this.background,
+    this.text,
+    this.secondaryText,
+    this.border,
+    this.actionPrimaryText,
+    this.actionSecondaryText,
+    this.formBackground,
+    this.formHighlightBorder,
+  });
+
+  Map<String, dynamic> toMap() => {
+    if (primary != null) 'primary': primary,
+    if (background != null) 'background': background,
+    if (text != null) 'text': text,
+    if (secondaryText != null) 'secondaryText': secondaryText,
+    if (border != null) 'border': border,
+    if (actionPrimaryText != null) 'actionPrimaryText': actionPrimaryText,
+    if (actionSecondaryText != null) 'actionSecondaryText': actionSecondaryText,
+    if (formBackground != null) 'formBackground': formBackground,
+    if (formHighlightBorder != null) 'formHighlightBorder': formHighlightBorder,
+  };
+}
