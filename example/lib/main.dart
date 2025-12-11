@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe_connect/flutter_stripe_connect.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +36,13 @@ class _HomePageState extends State<HomePage> {
   bool _isLoading = true;
   String? _error;
 
+  // Update this to your Stripe publishable key
+  static const String _publishableKey =
+      'pk_test_51QP7v3P2iT4dahNSJpxTeFGM15WrRGrKZDZMY5tXCTKwzNJY05VULcZ3nkPKQ1UxJLVKAu2uP0oDN2E1vfYyblLN00RGYmwPBZ';
+
+  // Update this to your backend server URL
+  static const String _backendUrl = 'http://localhost:3000/account-session';
+
   @override
   void initState() {
     super.initState();
@@ -44,8 +52,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _initializeStripeConnect() async {
     try {
       await StripeConnect.instance.initialize(
-        // 'pk_live_your_publishable_key' or 'pk_test_your_publishable_key'
-        publishableKey: 'pk_test_your_publishable_key',
+        publishableKey: _publishableKey,
         clientSecretProvider: _fetchClientSecret,
       );
       setState(() {
@@ -61,22 +68,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Fetch client secret from your backend server
-  /// Your server should create an Account Session and return the client_secret
   Future<String> _fetchClientSecret() async {
-    // Replace with your actual backend endpoint
-    final response = await http.post(
-      Uri.parse('https://your-backend.com/api/stripe/account-session'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'account': 'acct_connected_account_id', // The connected account ID
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(_backendUrl),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['client_secret']; // 'acct_sess_XXX_secret_XXX'
-    } else {
-      throw Exception('Failed to fetch client secret');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint('Fetched client secret successfully');
+        return data['client_secret'];
+      } else {
+        throw Exception(
+          'Failed to fetch client secret: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error fetching client secret: $e');
+      rethrow;
     }
   }
 
@@ -86,37 +96,63 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Stripe Connect Demo'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          if (kIsWeb)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Chip(
+                label: const Text('Web'),
+                backgroundColor: Colors.green.shade100,
+              ),
+            ),
+        ],
       ),
       body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    if (_isLoading || !_isInitialized) {
+    if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            Text('Error: $_error'),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _initializeStripeConnect,
-              child: const Text('Retry'),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('Error: $_error', textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _isLoading = true;
+                    _error = null;
+                  });
+                  _initializeStripeConnect();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
       );
+    }
+
+    if (!_isInitialized) {
+      return const Center(child: Text('Not initialized'));
     }
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        // Main Components Section
+        _buildSectionHeader('Main Components'),
         _buildCard(
           title: 'Account Onboarding',
           description: 'Collect required information from connected accounts',
@@ -128,12 +164,8 @@ class _HomePageState extends State<HomePage> {
           description: 'Let connected accounts manage their settings',
           icon: Icons.settings,
           onTap: () => _navigateTo(const AccountManagementScreen()),
-        ),
-        _buildCard(
-          title: 'Payouts',
-          description: 'View and manage payouts',
-          icon: Icons.account_balance,
-          onTap: () => _navigateTo(const PayoutsScreen()),
+          webOnly: false,
+          mobileNote: kIsWeb ? null : 'Limited on Android',
         ),
         _buildCard(
           title: 'Payments',
@@ -141,7 +173,84 @@ class _HomePageState extends State<HomePage> {
           icon: Icons.payment,
           onTap: () => _navigateTo(const PaymentsScreen()),
         ),
+        _buildCard(
+          title: 'Payouts',
+          description: 'View and manage payouts',
+          icon: Icons.account_balance,
+          onTap: () => _navigateTo(const PayoutsScreen()),
+        ),
+
+        // Additional Components Section
+        const SizedBox(height: 16),
+        _buildSectionHeader('Additional Components'),
+        _buildCard(
+          title: 'Balances',
+          description: 'View balance information',
+          icon: Icons.account_balance_wallet,
+          onTap: () => _navigateTo(const BalancesScreen()),
+        ),
+        _buildCard(
+          title: 'Notification Banner',
+          description: 'Show required actions for compliance',
+          icon: Icons.notifications,
+          onTap: () => _navigateTo(const NotificationBannerScreen()),
+        ),
+        _buildCard(
+          title: 'Documents',
+          description: 'View available documents',
+          icon: Icons.description,
+          onTap: () => _navigateTo(const DocumentsScreen()),
+        ),
+
+        // Web-Only Components Section
+        if (kIsWeb) ...[
+          const SizedBox(height: 16),
+          _buildSectionHeader('Web-Only Components'),
+          _buildCard(
+            title: 'Tax Settings',
+            description: 'Configure tax settings',
+            icon: Icons.receipt_long,
+            onTap: () => _navigateTo(const TaxSettingsScreen()),
+            webOnly: true,
+          ),
+          _buildCard(
+            title: 'Tax Registrations',
+            description: 'Manage tax registrations',
+            icon: Icons.app_registration,
+            onTap: () => _navigateTo(const TaxRegistrationsScreen()),
+            webOnly: true,
+          ),
+        ],
+
+        // Lists Section
+        const SizedBox(height: 16),
+        _buildSectionHeader('Lists & Details'),
+        _buildCard(
+          title: 'Disputes List',
+          description: 'View and manage disputes',
+          icon: Icons.gavel,
+          onTap: () => _navigateTo(const DisputesListScreen()),
+        ),
+        _buildCard(
+          title: 'Payouts List',
+          description: 'Filterable list of payouts',
+          icon: Icons.list_alt,
+          onTap: () => _navigateTo(const PayoutsListScreen()),
+        ),
       ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
     );
   }
 
@@ -150,13 +259,44 @@ class _HomePageState extends State<HomePage> {
     required String description,
     required IconData icon,
     required VoidCallback onTap,
+    bool webOnly = false,
+    String? mobileNote,
   }) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
-        leading: Icon(icon, size: 40),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(description),
+        leading: Icon(
+          icon,
+          size: 36,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        title: Row(
+          children: [
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            if (webOnly) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text('Web', style: TextStyle(fontSize: 10)),
+              ),
+            ],
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(description),
+            if (mobileNote != null)
+              Text(
+                mobileNote,
+                style: TextStyle(fontSize: 11, color: Colors.orange.shade700),
+              ),
+          ],
+        ),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
@@ -240,7 +380,134 @@ class PaymentsScreen extends StatelessWidget {
   }
 }
 
+// Balances Screen
+class BalancesScreen extends StatelessWidget {
+  const BalancesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Balances')),
+      body: StripeBalances(
+        onLoaded: () => debugPrint('Balances loaded'),
+        onLoadError: (error) => _showError(context, error),
+      ),
+    );
+  }
+}
+
+// Notification Banner Screen
+class NotificationBannerScreen extends StatelessWidget {
+  const NotificationBannerScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Notification Banner')),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 100,
+            child: StripeNotificationBanner(
+              onLoaded: () => debugPrint('Notification banner loaded'),
+              onLoadError: (error) => _showError(context, error),
+            ),
+          ),
+          const Expanded(
+            child: Center(
+              child: Text(
+                'The notification banner appears above when there are required actions.',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Documents Screen
+class DocumentsScreen extends StatelessWidget {
+  const DocumentsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Documents')),
+      body: StripeDocuments(
+        onLoaded: () => debugPrint('Documents loaded'),
+        onLoadError: (error) => _showError(context, error),
+      ),
+    );
+  }
+}
+
+// Tax Settings Screen (Web Only)
+class TaxSettingsScreen extends StatelessWidget {
+  const TaxSettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tax Settings')),
+      body: StripeTaxSettings(
+        onLoaded: () => debugPrint('Tax settings loaded'),
+        onLoadError: (error) => _showError(context, error),
+      ),
+    );
+  }
+}
+
+// Tax Registrations Screen (Web Only)
+class TaxRegistrationsScreen extends StatelessWidget {
+  const TaxRegistrationsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tax Registrations')),
+      body: StripeTaxRegistrations(
+        onLoaded: () => debugPrint('Tax registrations loaded'),
+        onLoadError: (error) => _showError(context, error),
+      ),
+    );
+  }
+}
+
+// Disputes List Screen
+class DisputesListScreen extends StatelessWidget {
+  const DisputesListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Disputes List')),
+      body: StripeDisputesList(
+        onLoaded: () => debugPrint('Disputes list loaded'),
+        onLoadError: (error) => _showError(context, error),
+      ),
+    );
+  }
+}
+
+// Payouts List Screen
+class PayoutsListScreen extends StatelessWidget {
+  const PayoutsListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Payouts List')),
+      body: StripePayoutsList(
+        onLoaded: () => debugPrint('Payouts list loaded'),
+        onLoadError: (error) => _showError(context, error),
+      ),
+    );
+  }
+}
+
 void _showError(BuildContext context, String error) {
+  debugPrint('Component error: $error');
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
   );
