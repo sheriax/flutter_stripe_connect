@@ -1,5 +1,10 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
+// Conditional import for web support
+import 'stripe_connect_stub.dart'
+    if (dart.library.html) 'stripe_connect_web.dart' as web_impl;
 
 typedef ClientSecretProvider = Future<String> Function();
 
@@ -16,12 +21,25 @@ class StripeConnect {
   /// Initialize Stripe Connect with your publishable key
   /// [publishableKey] - Your Stripe publishable key
   /// [clientSecretProvider] - Async function that fetches a client secret from your server
+  /// [appearance] - Optional appearance customization (only used on web)
   Future<void> initialize({
     required String publishableKey,
     required ClientSecretProvider clientSecretProvider,
+    ConnectAppearance? appearance,
   }) async {
     _clientSecretProvider = clientSecretProvider;
 
+    if (kIsWeb) {
+      // Use web-specific initialization
+      await web_impl.StripeConnectWeb.instance.initialize(
+        publishableKey: publishableKey,
+        clientSecretProvider: clientSecretProvider,
+        appearance: appearance,
+      );
+      return;
+    }
+
+    // Native platform initialization
     _channel.setMethodCallHandler(_handleMethodCall);
 
     await _channel.invokeMethod('initialize', {
@@ -43,6 +61,10 @@ class StripeConnect {
 
   /// Logout and clear the current session
   Future<void> logout() async {
+    if (kIsWeb) {
+      web_impl.StripeConnectWeb.instance.logout();
+      return;
+    }
     await _channel.invokeMethod('logout');
   }
 }
@@ -56,10 +78,10 @@ class ConnectAppearance {
   const ConnectAppearance({this.fontFamily, this.colors, this.cornerRadius});
 
   Map<String, dynamic> toMap() => {
-    if (fontFamily != null) 'fontFamily': fontFamily,
-    if (colors != null) 'colors': colors!.toMap(),
-    if (cornerRadius != null) 'cornerRadius': cornerRadius,
-  };
+        if (fontFamily != null) 'fontFamily': fontFamily,
+        if (colors != null) 'colors': colors!.toMap(),
+        if (cornerRadius != null) 'cornerRadius': cornerRadius,
+      };
 }
 
 class ConnectColors {
@@ -86,14 +108,16 @@ class ConnectColors {
   });
 
   Map<String, dynamic> toMap() => {
-    if (primary != null) 'primary': primary,
-    if (background != null) 'background': background,
-    if (text != null) 'text': text,
-    if (secondaryText != null) 'secondaryText': secondaryText,
-    if (border != null) 'border': border,
-    if (actionPrimaryText != null) 'actionPrimaryText': actionPrimaryText,
-    if (actionSecondaryText != null) 'actionSecondaryText': actionSecondaryText,
-    if (formBackground != null) 'formBackground': formBackground,
-    if (formHighlightBorder != null) 'formHighlightBorder': formHighlightBorder,
-  };
+        if (primary != null) 'primary': primary,
+        if (background != null) 'background': background,
+        if (text != null) 'text': text,
+        if (secondaryText != null) 'secondaryText': secondaryText,
+        if (border != null) 'border': border,
+        if (actionPrimaryText != null) 'actionPrimaryText': actionPrimaryText,
+        if (actionSecondaryText != null)
+          'actionSecondaryText': actionSecondaryText,
+        if (formBackground != null) 'formBackground': formBackground,
+        if (formHighlightBorder != null)
+          'formHighlightBorder': formHighlightBorder,
+      };
 }

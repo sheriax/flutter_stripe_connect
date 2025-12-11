@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../stripe_connect.dart';
 
+// Conditional import for web support
+import 'connect_components_stub.dart'
+    if (dart.library.html) 'web_components.dart' as web_impl;
+
 /// Callback for when a component finishes loading
 typedef OnLoadCallback = void Function();
 
@@ -12,6 +16,9 @@ typedef OnLoadErrorCallback = void Function(String error);
 
 /// Callback for when onboarding exits
 typedef OnExitCallback = void Function();
+
+/// Callback for when a component is closed
+typedef OnCloseCallback = void Function();
 
 /// Account Onboarding component for collecting connected account information
 class StripeAccountOnboarding extends StatelessWidget {
@@ -32,6 +39,14 @@ class StripeAccountOnboarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeAccountOnboardingWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        onExit: onExit,
+        appearance: appearance,
+      );
+    }
     return _StripeConnectPlatformView(
       viewType: 'stripe_account_onboarding',
       onLoaded: onLoaded,
@@ -62,6 +77,13 @@ class StripeAccountManagement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeAccountManagementWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
     return _StripeConnectPlatformView(
       viewType: 'stripe_account_management',
       onLoaded: onLoaded,
@@ -92,6 +114,13 @@ class StripePayouts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripePayoutsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
     return _StripeConnectPlatformView(
       viewType: 'stripe_payouts',
       onLoaded: onLoaded,
@@ -119,6 +148,13 @@ class StripePayments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripePaymentsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
     return _StripeConnectPlatformView(
       viewType: 'stripe_payments',
       onLoaded: onLoaded,
@@ -129,7 +165,335 @@ class StripePayments extends StatelessWidget {
   }
 }
 
-/// Internal platform view widget
+/// Notification Banner component for showing required actions
+///
+/// Web only - not available on iOS/Android
+class StripeNotificationBanner extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripeNotificationBanner({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeNotificationBannerWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_notification_banner',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+    );
+  }
+}
+
+/// Balances component for showing balance information
+class StripeBalances extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripeBalances({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeBalancesWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_balances',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+    );
+  }
+}
+
+/// Documents component for showing available documents
+///
+/// Web only - limited support on iOS/Android
+class StripeDocuments extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripeDocuments({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeDocumentsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_documents',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+    );
+  }
+}
+
+/// Tax Settings component for managing tax configuration
+///
+/// Web only - not available on iOS/Android
+class StripeTaxSettings extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripeTaxSettings({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeTaxSettingsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    // Not available on mobile - show error
+    onLoadError?.call('Tax Settings is only available on Web platform');
+    return const Center(
+      child: Text('Tax Settings is only available on Web'),
+    );
+  }
+}
+
+/// Tax Registrations component for managing tax registrations
+///
+/// Web only - not available on iOS/Android
+class StripeTaxRegistrations extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripeTaxRegistrations({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeTaxRegistrationsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    // Not available on mobile - show error
+    onLoadError?.call('Tax Registrations is only available on Web platform');
+    return const Center(
+      child: Text('Tax Registrations is only available on Web'),
+    );
+  }
+}
+
+/// Payouts List component for showing filterable payout list
+class StripePayoutsList extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripePayoutsList({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripePayoutsListWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_payouts_list',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+    );
+  }
+}
+
+/// Payment Details component for showing payment details overlay
+class StripePaymentDetails extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final OnCloseCallback? onClose;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  /// The payment intent or charge ID to display
+  final String? paymentId;
+
+  const StripePaymentDetails({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.onClose,
+    this.appearance,
+    this.gestureRecognizers,
+    this.paymentId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripePaymentDetailsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        onClose: onClose,
+        appearance: appearance,
+        paymentId: paymentId,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_payment_details',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+      extraParams: paymentId != null ? {'paymentId': paymentId} : null,
+    );
+  }
+}
+
+/// Payout Details component for showing payout details overlay
+class StripePayoutDetails extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final OnCloseCallback? onClose;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  /// The payout ID to display
+  final String? payoutId;
+
+  const StripePayoutDetails({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.onClose,
+    this.appearance,
+    this.gestureRecognizers,
+    this.payoutId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripePayoutDetailsWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        onClose: onClose,
+        appearance: appearance,
+        payoutId: payoutId,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_payout_details',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+      extraParams: payoutId != null ? {'payoutId': payoutId} : null,
+    );
+  }
+}
+
+/// Disputes List component for showing and managing disputes
+class StripeDisputesList extends StatelessWidget {
+  final OnLoadCallback? onLoaded;
+  final OnLoadErrorCallback? onLoadError;
+  final ConnectAppearance? appearance;
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  const StripeDisputesList({
+    super.key,
+    this.onLoaded,
+    this.onLoadError,
+    this.appearance,
+    this.gestureRecognizers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return web_impl.StripeDisputesListWeb(
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+      );
+    }
+    return _StripeConnectPlatformView(
+      viewType: 'stripe_disputes_list',
+      onLoaded: onLoaded,
+      onLoadError: onLoadError,
+      appearance: appearance,
+      gestureRecognizers: gestureRecognizers,
+    );
+  }
+}
+
+/// Internal platform view widget for iOS/Android
 class _StripeConnectPlatformView extends StatefulWidget {
   final String viewType;
   final OnLoadCallback? onLoaded;
