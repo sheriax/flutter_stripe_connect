@@ -54,7 +54,13 @@ const server = Bun.serve({
                 standard_payouts: true,
               },
             },
-            balances: { enabled: true },
+            balances: {
+              enabled: true,
+              features: {
+                instant_payouts: true,
+                standard_payouts: true,
+              },
+            },
             notification_banner: { enabled: true },
             documents: { enabled: true },
             tax_settings: { enabled: true },
