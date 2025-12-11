@@ -1,6 +1,9 @@
 package com.sheriax.flutter_stripe_connect
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -31,6 +34,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
     private lateinit var context: Context
     private var activity: FragmentActivity? = null
     private var accountOnboardingController: AccountOnboardingController? = null
+    private var lifecycleCallbacks: Application.ActivityLifecycleCallbacks? = null
     
     companion object {
         var embeddedComponentManager: EmbeddedComponentManager? = null
@@ -39,6 +43,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
             private set
         var currentActivity: FragmentActivity? = null
             private set
+        private var isLifecycleRegistered = false
     }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -47,21 +52,55 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         context = binding.applicationContext
         pluginInstance = this
         
+        // Register activity lifecycle callbacks to catch onCreate
+        registerActivityLifecycleCallbacks(binding.applicationContext)
+        
         // Register platform view factory
         binding.platformViewRegistry.registerViewFactory(
             "flutter_stripe_connect_view",
             StripeConnectViewFactory(binding.binaryMessenger)
         )
     }
+    
+    private fun registerActivityLifecycleCallbacks(context: Context) {
+        if (isLifecycleRegistered) return
+        
+        val application = context.applicationContext as? Application ?: return
+        
+        lifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                if (activity is FragmentActivity) {
+                    EmbeddedComponentManager.onActivityCreate(activity)
+                }
+            }
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityResumed(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityStopped(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        }
+        
+        application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
+        isLifecycleRegistered = true
+    }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
         pluginInstance = null
+        
+        // Unregister lifecycle callbacks
+        lifecycleCallbacks?.let { callbacks ->
+            (context.applicationContext as? Application)?.unregisterActivityLifecycleCallbacks(callbacks)
+        }
+        lifecycleCallbacks = null
+        isLifecycleRegistered = false
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity as? FragmentActivity
         currentActivity = activity
+        // Also call onActivityCreate here as a fallback for the current activity
         activity?.let { 
             EmbeddedComponentManager.onActivityCreate(it)
         }
@@ -152,17 +191,20 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
     }
 
     fun fetchClientSecretFromFlutter(callback: (String?) -> Unit) {
-        channel.invokeMethod("fetchClientSecret", null, object : MethodChannel.Result {
-            override fun success(result: Any?) {
-                callback(result as? String)
-            }
-            override fun error(code: String, msg: String?, details: Any?) {
-                callback(null)
-            }
-            override fun notImplemented() {
-                callback(null)
-            }
-        })
+        // Must run on main thread as MethodChannel requires UI thread
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            channel.invokeMethod("fetchClientSecret", null, object : MethodChannel.Result {
+                override fun success(result: Any?) {
+                    callback(result as? String)
+                }
+                override fun error(code: String, msg: String?, details: Any?) {
+                    callback(null)
+                }
+                override fun notImplemented() {
+                    callback(null)
+                }
+            })
+        }
     }
 }
 

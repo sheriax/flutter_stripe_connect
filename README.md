@@ -19,6 +19,31 @@ A Flutter plugin for Stripe Connect embedded components. Easily integrate accoun
 |:-------:|:---:|
 |    ✅    |  ✅  |
 
+### Platform-Specific Limitations
+
+| Component | Android | iOS |
+|-----------|:-------:|:---:|
+| Account Onboarding | ✅ | ✅ |
+| Account Management | ❌ | ✅ |
+| Payouts | ✅ | ✅ |
+| Payments | ✅ | ✅ |
+
+> **Note**: Account Management is not available in the Stripe Connect Android SDK. It works on iOS and Web only.
+
+## Android Setup
+
+**Important**: Your `MainActivity` must extend `FlutterFragmentActivity` (not `FlutterActivity`) for the Stripe Connect components to work properly.
+
+Update your `android/app/src/main/kotlin/.../MainActivity.kt`:
+
+```kotlin
+package com.example.yourapp
+
+import io.flutter.embedding.android.FlutterFragmentActivity
+
+class MainActivity : FlutterFragmentActivity()
+```
+
 ## Installation
 
 Add `flutter_stripe_connect` to your `pubspec.yaml`:
