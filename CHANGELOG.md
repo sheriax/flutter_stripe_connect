@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.2
+
+* Fixed issue with Android platform.
+
 ## 0.0.1
 
 * Initial release
