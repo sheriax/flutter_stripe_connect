@@ -65,6 +65,9 @@ const server = Bun.serve({
             documents: { enabled: true },
             tax_settings: { enabled: true },
             tax_registrations: { enabled: true },
+            payouts_list: { enabled: true },
+            // financial_account: { enabled: true },
+            disputes_list: { enabled: true },
           },
         });
 

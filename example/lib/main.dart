@@ -36,13 +36,6 @@ class _HomePageState extends State<HomePage> {
   bool _isLoading = true;
   String? _error;
 
-  // Update this to your Stripe publishable key
-  static const String _publishableKey =
-      'pk_test_51QP7v3P2iT4dahNSJpxTeFGM15WrRGrKZDZMY5tXCTKwzNJY05VULcZ3nkPKQ1UxJLVKAu2uP0oDN2E1vfYyblLN00RGYmwPBZ';
-
-  // Update this to your backend server URL
-  static const String _backendUrl = 'http://localhost:3000/account-session';
-
   @override
   void initState() {
     super.initState();
@@ -51,8 +44,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _initializeStripeConnect() async {
     try {
+      // Update this to your Stripe publishable key
+      const String publishableKey = 'pk_test_5******';
+
       await StripeConnect.instance.initialize(
-        publishableKey: _publishableKey,
+        publishableKey: publishableKey,
         clientSecretProvider: _fetchClientSecret,
       );
       setState(() {
@@ -70,14 +66,18 @@ class _HomePageState extends State<HomePage> {
   /// Fetch client secret from your backend server
   Future<String> _fetchClientSecret() async {
     try {
+      // Update this to your backend server URL
       final response = await http.post(
-        Uri.parse(_backendUrl),
+        Uri.parse("http://localhost:3000/account-session"),
         headers: {'Content-Type': 'application/json'},
+        // Update this to your connected account ID
+        body: jsonEncode({'accountId': 'acct_**********'}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         debugPrint('Fetched client secret successfully');
+        print(data);
         return data['client_secret'];
       } else {
         throw Exception(

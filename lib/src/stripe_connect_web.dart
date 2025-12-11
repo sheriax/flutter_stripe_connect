@@ -122,17 +122,15 @@ class StripeConnectWeb {
 
   /// Create a JS function that returns a Promise for fetching client secret
   JSFunction _createFetchClientSecretFunction() {
-    return ((JSAny? resolve, JSAny? reject) {
-      _fetchClientSecretAsync().then((secret) {
+    // fetchClientSecret must be a function that takes NO arguments and returns a Promise<string>
+    return (() {
+      return _fetchClientSecretAsync().then((secret) {
         if (secret != null) {
-          (resolve as JSFunction).callAsFunction(null, secret.toJS);
+          return secret.toJS;
         } else {
-          (reject as JSFunction)
-              .callAsFunction(null, 'Failed to fetch client secret'.toJS);
+          throw Exception('Failed to fetch client secret');
         }
-      }).catchError((error) {
-        (reject as JSFunction).callAsFunction(null, error.toString().toJS);
-      });
+      }).toJS;
     }).toJS;
   }
 
