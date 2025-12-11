@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0
+## 0.1.0
 
 * **Web Platform Support** - Added full web platform support using Stripe Connect.js
 * Added new embedded components:
