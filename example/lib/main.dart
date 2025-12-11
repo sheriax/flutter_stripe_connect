@@ -44,8 +44,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _initializeStripeConnect() async {
     try {
       await StripeConnect.instance.initialize(
-        publishableKey:
-            'ek_test_YWNjdF8xUzhWZmVETm1HQm1tZWtHLFRJNXBEcWNFRmhpbDA2anpTOFdTRVhDWnJFN0FrRHE_00q7akka27',
+        // 'pk_live_your_publishable_key' or 'pk_test_your_publishable_key'
+        publishableKey: 'pk_test_your_publishable_key',
         clientSecretProvider: _fetchClientSecret,
       );
       setState(() {
@@ -64,21 +64,20 @@ class _HomePageState extends State<HomePage> {
   /// Your server should create an Account Session and return the client_secret
   Future<String> _fetchClientSecret() async {
     // Replace with your actual backend endpoint
-    // final response = await http.post(
-    //   Uri.parse('https://your-backend.com/api/stripe/account-session'),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode({
-    //     'account': 'acct_connected_account_id', // The connected account ID
-    //   }),
-    // );
+    final response = await http.post(
+      Uri.parse('https://your-backend.com/api/stripe/account-session'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'account': 'acct_connected_account_id', // The connected account ID
+      }),
+    );
 
-    // if (response.statusCode == 200) {
-    //   final data = jsonDecode(response.body);
-    //   return data['client_secret'];
-    // } else {
-    //   throw Exception('Failed to fetch client secret');
-    // }
-    return "seti_1Sd73wDNmGBmmekGuKQxIqwV_secret_TaHdFH1HZpucUDCLYFpxr369GPiw8yZ";
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['client_secret']; // 'acct_sess_XXX_secret_XXX'
+    } else {
+      throw Exception('Failed to fetch client secret');
+    }
   }
 
   @override
@@ -93,7 +92,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody() {
-    if (_isLoading) {
+    if (_isLoading || !_isInitialized) {
       return const Center(child: CircularProgressIndicator());
     }
 
