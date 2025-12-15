@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+* Documentation cleanup - replaced example branding with generic placeholders
+* Updated WebView integration guide examples
+
 ## 0.2.0
 
 * **WebView Mode** - Added optional WebView-based rendering for all components

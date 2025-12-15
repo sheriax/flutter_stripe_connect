@@ -8,7 +8,7 @@
 
 This document outlines a **hybrid approach** to Stripe Connect integration where:
 
-1. A **Next.js website** (`connect.echify.com`) hosts Stripe Connect embedded components
+1. A **Next.js website** (`connect.yourapp.com`) hosts Stripe Connect embedded components
 2. The **Flutter mobile app** displays this website in a WebView
 3. URL parameters (`publishableKey`, `clientSecret`) enable secure initialization
 
@@ -20,13 +20,13 @@ This approach provides **full component availability** (unlike native SDKs which
 
 ```mermaid
 flowchart TB
-    subgraph Flutter["Flutter Mobile App (Echify)"]
+    subgraph Flutter["Flutter Mobile App (Your App)"]
         WebView["WebView Component"]
         AppLogic["App Business Logic"]
         SecretFetch["Fetch Client Secret"]
     end
     
-    subgraph NextJS["Next.js Website (connect.echify.com)"]
+    subgraph NextJS["Next.js Website (connect.yourapp.com)"]
         Pages["Route Pages"]
         ConnectJS["Connect.js SDK"]
         Components["Stripe Embedded Components"]
@@ -69,7 +69,7 @@ sequenceDiagram
     participant FlutterApp as Flutter App
     participant Backend as Your Backend
     participant Stripe as Stripe API
-    participant Website as connect.echify.com
+    participant Website as connect.yourapp.com
     participant StripeJS as Connect.js
     
     User->>FlutterApp: Open Stripe Dashboard
@@ -78,7 +78,7 @@ sequenceDiagram
     Stripe-->>Backend: { client_secret }
     Backend-->>FlutterApp: { client_secret }
     
-    FlutterApp->>Website: Open WebView<br/>connect.echify.com/payments?<br/>publishableKey=pk_xxx&<br/>clientSecret=cs_xxx
+    FlutterApp->>Website: Open WebView<br/>connect.yourapp.com/payments?<br/>publishableKey=pk_xxx&<br/>clientSecret=cs_xxx
     
     Website->>StripeJS: loadConnectAndInitialize(<br/>publishableKey, clientSecret)
     StripeJS->>Stripe: Initialize session
@@ -166,12 +166,12 @@ All **25 embedded components** are available when using the web-based approach:
 
 ## Implementation Details
 
-### Part 1: Next.js Website (connect.echify.com)
+### Part 1: Next.js Website (connect.yourapp.com)
 
 #### Project Structure
 
 ```
-connect.echify.com/
+connect.yourapp.com/
 ├── app/
 │   ├── layout.tsx                  # Root layout with providers
 │   ├── page.tsx                    # Landing/redirect page
@@ -766,7 +766,7 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
   }
 
   String _buildUrl() {
-    final baseUrl = 'https://connect.echify.com';
+    final baseUrl = 'https://connect.yourapp.com';
     final path = _getComponentPath();
     
     final params = {
@@ -947,7 +947,7 @@ class StripeDashboardScreen extends StatefulWidget {
 
 class _StripeDashboardScreenState extends State<StripeDashboardScreen> {
   final StripeConnectService _service = StripeConnectService(
-    baseUrl: 'https://api.echify.com',
+    baseUrl: 'https://api.yourapp.com',
   );
 
   AccountSessionResponse? _session;
@@ -1045,7 +1045,7 @@ class _StripeConnectDashboardState extends State<StripeConnectDashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final StripeConnectService _service = StripeConnectService(
-    baseUrl: 'https://api.echify.com',
+    baseUrl: 'https://api.yourapp.com',
   );
 
   AccountSessionResponse? _session;
@@ -1473,7 +1473,7 @@ Add to `android/app/src/main/AndroidManifest.xml`:
 2. [ ] Set up CSP headers
 3. [ ] Configure CORS if needed
 4. [ ] Deploy to hosting (Vercel recommended)
-5. [ ] Configure custom domain (`connect.echify.com`)
+5. [ ] Configure custom domain (`connect.yourapp.com`)
 6. [ ] Enable HTTPS (automatic with Vercel)
 
 ### Backend
