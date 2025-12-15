@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../stripe_connect.dart';
+import 'webview_components.dart';
 
 // Conditional import for web support
 import 'connect_components_stub.dart'
@@ -47,6 +48,19 @@ class StripeAccountOnboarding extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.accountOnboarding,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        onExit: onExit,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_account_onboarding',
       onLoaded: onLoaded,
@@ -84,6 +98,18 @@ class StripeAccountManagement extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.accountManagement,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_account_management',
       onLoaded: onLoaded,
@@ -121,6 +147,18 @@ class StripePayouts extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.payouts,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_payouts',
       onLoaded: onLoaded,
@@ -155,6 +193,18 @@ class StripePayments extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.payments,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_payments',
       onLoaded: onLoaded,
@@ -191,6 +241,18 @@ class StripeNotificationBanner extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.notificationBanner,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_notification_banner',
       onLoaded: onLoaded,
@@ -225,6 +287,18 @@ class StripeBalances extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.balances,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_balances',
       onLoaded: onLoaded,
@@ -261,6 +335,18 @@ class StripeDocuments extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.documents,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_documents',
       onLoaded: onLoaded,
@@ -297,10 +383,23 @@ class StripeTaxSettings extends StatelessWidget {
         appearance: appearance,
       );
     }
-    // Not available on mobile - show error
-    onLoadError?.call('Tax Settings is only available on Web platform');
+
+    // WebView mode - Tax is only available via WebView on mobile
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.taxSettings,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Tax Settings requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
     return const Center(
-      child: Text('Tax Settings is only available on Web'),
+      child: Text('Tax Settings requires WebView mode'),
     );
   }
 }
@@ -331,10 +430,23 @@ class StripeTaxRegistrations extends StatelessWidget {
         appearance: appearance,
       );
     }
-    // Not available on mobile - show error
-    onLoadError?.call('Tax Registrations is only available on Web platform');
+
+    // WebView mode - Tax is only available via WebView on mobile
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.taxRegistrations,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Tax Registrations requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
     return const Center(
-      child: Text('Tax Registrations is only available on Web'),
+      child: Text('Tax Registrations requires WebView mode'),
     );
   }
 }
@@ -363,6 +475,18 @@ class StripePayoutsList extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.payoutsList,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_payouts_list',
       onLoaded: onLoaded,
@@ -405,6 +529,20 @@ class StripePaymentDetails extends StatelessWidget {
         paymentId: paymentId,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.paymentDetails,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        onClose: onClose,
+        extraParams: paymentId != null ? {'paymentId': paymentId!} : null,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_payment_details',
       onLoaded: onLoaded,
@@ -448,6 +586,20 @@ class StripePayoutDetails extends StatelessWidget {
         payoutId: payoutId,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.payoutDetails,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        onClose: onClose,
+        extraParams: payoutId != null ? {'payoutId': payoutId!} : null,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_payout_details',
       onLoaded: onLoaded,
@@ -483,6 +635,18 @@ class StripeDisputesList extends StatelessWidget {
         appearance: appearance,
       );
     }
+
+    // WebView mode
+    final webViewConfig = StripeConnect.webViewConfig;
+    if (webViewConfig != null) {
+      return StripeConnectWebView(
+        config: webViewConfig,
+        componentPath: StripeConnectPaths.disputesList,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+      );
+    }
+
     return _StripeConnectPlatformView(
       viewType: 'stripe_disputes_list',
       onLoaded: onLoaded,

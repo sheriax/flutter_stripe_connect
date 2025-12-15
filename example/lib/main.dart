@@ -45,11 +45,18 @@ class _HomePageState extends State<HomePage> {
   Future<void> _initializeStripeConnect() async {
     try {
       // Update this to your Stripe publishable key
-      const String publishableKey = 'pk_test_5******';
+      const String publishableKey =
+          'pk_test_51S8VfeDNmGBmmekGKA8WYt57O1xg5xoefjAKMLrieoe2d539F5xUoWd4xRD0vRgyVppQjIr75pzAln5khchyIDmM00u9bSCJJf';
 
       await StripeConnect.instance.initialize(
         publishableKey: publishableKey,
         clientSecretProvider: _fetchClientSecret,
+        // webViewConfig: WebViewConfig(
+        //   initialUrl: 'https://stripe.com',
+        //   onWebViewCreated: (controller) {
+        //     _controller = controller;
+        //   },
+        // ),
       );
       setState(() {
         _isInitialized = true;
@@ -77,7 +84,6 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         debugPrint('Fetched client secret successfully');
-        print(data);
         return data['client_secret'];
       } else {
         throw Exception(

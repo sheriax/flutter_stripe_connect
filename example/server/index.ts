@@ -32,7 +32,7 @@ const server = Bun.serve({
     if (url.pathname === '/account-session' && request.method === 'POST') {
       try {
         const body = await request.json() as { accountId: string };
-        const connectedAccountId = body.accountId;
+        const connectedAccountId = body.accountId ?? process.env.SAMPLE_CONNECTED_ACC_ID!;
 
         const accountSession = await stripe.accountSessions.create({
           account: connectedAccountId,
