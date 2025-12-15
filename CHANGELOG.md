@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2
+
+* Fixed CocoaPods dependency conflict issues
+* Simplified podspec dependency logic
+
 ## 0.2.1
 
 * Documentation cleanup - replaced example branding with generic placeholders

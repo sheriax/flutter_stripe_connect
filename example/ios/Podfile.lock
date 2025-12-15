@@ -1,25 +1,29 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_stripe_connect (0.0.1):
+  - flutter_stripe_connect (0.2.1):
     - Flutter
-    - StripeConnect (~> 24.0)
+    - StripeConnect (~> 25.0)
   - integration_test (0.0.1):
     - Flutter
-  - StripeConnect (24.25.0):
-    - StripeCore (= 24.25.0)
-    - StripeFinancialConnections (= 24.25.0)
-    - StripeUICore (= 24.25.0)
-  - StripeCore (24.25.0)
-  - StripeFinancialConnections (24.25.0):
-    - StripeCore (= 24.25.0)
-    - StripeUICore (= 24.25.0)
-  - StripeUICore (24.25.0):
-    - StripeCore (= 24.25.0)
+  - StripeConnect (25.2.0):
+    - StripeCore (= 25.2.0)
+    - StripeFinancialConnections (= 25.2.0)
+    - StripeUICore (= 25.2.0)
+  - StripeCore (25.2.0)
+  - StripeFinancialConnections (25.2.0):
+    - StripeCore (= 25.2.0)
+    - StripeUICore (= 25.2.0)
+  - StripeUICore (25.2.0):
+    - StripeCore (= 25.2.0)
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_stripe_connect (from `.symlinks/plugins/flutter_stripe_connect/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -35,15 +39,18 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_stripe_connect/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_stripe_connect: ac67f71fd69914efbeccb0851d75f239fb1c8b98
+  flutter_stripe_connect: 5126e9b9812830a011fd67e264f72ebca114c734
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  StripeConnect: b99a0f3eed6868489c5da21af25ee41a6338a336
-  StripeCore: b3f991ef10e45ab2fa841e0a732825d795b2379e
-  StripeFinancialConnections: 92079b12dfe6453ab296ecc9e4cdf2b069015345
-  StripeUICore: 55ebd4a7a2c12600645526bfdd6e5bd8ea1c5335
+  StripeConnect: 9304e8252a5579316fe15cb1347a9e45cf90b9d8
+  StripeCore: 435584a514851a3037bd4d818837c8c1e56da16d
+  StripeFinancialConnections: 3c21d9acc6fa1d9aa752d4b34228caaea15b3902
+  StripeUICore: 7b4d90167014a0f3e1131b7ffaf24858b1b8ea96
+  webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
 PODFILE CHECKSUM: 53a6aebc29ccee84c41f92f409fc20cd4ca011f1
 
