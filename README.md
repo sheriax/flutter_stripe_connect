@@ -14,12 +14,13 @@ A Flutter plugin for Stripe Connect embedded components. Easily integrate accoun
 - **Balances** - Show balance information and payout controls
 - **Notification Banner** - Display required actions for compliance
 - **Documents** - Show documents available for download
-- **Tax Settings** - Allow connected accounts to configure tax settings (Web only)
-- **Tax Registrations** - Manage tax registrations (Web only)
+- **Tax Settings** - Allow connected accounts to configure tax settings
+- **Tax Registrations** - Manage tax registrations
 - **Disputes List** - View and manage disputes
 - **Payment Details** - Show detailed payment information
 - **Payout Details** - Show detailed payout information
 - **Payouts List** - Filterable list of payouts
+- **WebView Mode** - Optional self-hosted web rendering for full component access
 - **Customizable Appearance** - Configure colors, fonts, and corner radius
 
 ## Platform Support
@@ -32,23 +33,25 @@ A Flutter plugin for Stripe Connect embedded components. Easily integrate accoun
 
 ### Component Availability by Platform
 
-| Component | iOS | Android | Web |
-|:----------|:---:|:-------:|:---:|
-| Account Onboarding | ✅ | ✅ | ✅ |
-| Account Management | ✅ | ❌ | ✅ |
-| Payments | ✅ | ✅ | ✅ |
-| Payouts | ✅ | ✅ | ✅ |
-| Notification Banner | ✅ | ⚠️ | ✅ |
-| Balances | ✅ | ⚠️ | ✅ |
-| Documents | ⚠️ | ⚠️ | ✅ |
-| Tax Settings | ❌ | ❌ | ✅ |
-| Tax Registrations | ❌ | ❌ | ✅ |
-| Disputes List | ✅ | ✅ | ✅ |
-| Payment Details | ✅ | ✅ | ✅ |
-| Payout Details | ✅ | ✅ | ✅ |
-| Payouts List | ✅ | ✅ | ✅ |
+| Component | iOS | Android | Web | WebView Mode |
+|:----------|:---:|:-------:|:---:|:------------:|
+| Account Onboarding | ✅ | ✅ | ✅ | ✅ |
+| Account Management | ✅ | ❌ | ✅ | ✅ |
+| Payments | ✅ | ✅ | ✅ | ✅ |
+| Payouts | ✅ | ✅ | ✅ | ✅ |
+| Notification Banner | ✅ | ⚠️ | ✅ | ✅ |
+| Balances | ✅ | ⚠️ | ✅ | ✅ |
+| Documents | ⚠️ | ⚠️ | ✅ | ✅ |
+| Tax Settings | ❌ | ❌ | ✅ | ✅ |
+| Tax Registrations | ❌ | ❌ | ✅ | ✅ |
+| Disputes List | ✅ | ✅ | ✅ | ✅ |
+| Payment Details | ✅ | ✅ | ✅ | ✅ |
+| Payout Details | ✅ | ✅ | ✅ | ✅ |
+| Payouts List | ✅ | ✅ | ✅ | ✅ |
 
 > **Legend:** ✅ Fully Supported | ⚠️ Limited/Preview | ❌ Not Supported
+>
+> **WebView Mode**: Requires hosting your own web app. See `STRIPE_CONNECT_WEBVIEW_INTEGRATION.md`.
 
 ## Installation
 
@@ -56,7 +59,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.1.0
+  flutter_stripe_connect: ^0.2.1
 ```
 
 ## Platform Setup
@@ -78,6 +81,12 @@ class MainActivity : FlutterFragmentActivity()
 ### iOS Setup
 
 No additional setup required. The plugin uses StripeConnect iOS SDK via CocoaPods.
+
+> **Troubleshooting**: If pod install fails on the first try, run:
+> ```bash
+> cd ios/
+> pod install --repo-update
+> ```
 
 ### Web Setup
 
@@ -115,6 +124,29 @@ void main() async {
   runApp(MyApp());
 }
 ```
+
+### 1b. Enable WebView Mode (Optional)
+
+For full component access on mobile (including Tax, Capital, Issuing), use WebView mode:
+
+```dart
+await StripeConnect.instance.initialize(
+  publishableKey: 'pk_test_...',
+  clientSecretProvider: () async {
+    final response = await http.post(
+      Uri.parse('https://your-server.com/create-account-session'),
+    );
+    return jsonDecode(response.body)['client_secret'];
+  },
+  webViewConfig: WebViewConfig(
+    baseUrl: 'https://connect.yourapp.com',  // Your hosted web app
+    theme: 'light',
+    primaryColor: '#635BFF',
+  ),
+);
+```
+
+> **Note**: WebView mode requires hosting your own Next.js app. See `STRIPE_CONNECT_WEBVIEW_INTEGRATION.md` for setup guide.
 
 ### 2. Use the Embedded Components
 

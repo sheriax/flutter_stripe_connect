@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'models/webview_config.dart';
 
 // Conditional import for web support
 import 'stripe_connect_stub.dart'
@@ -17,17 +18,33 @@ class StripeConnect {
   StripeConnect._();
 
   ClientSecretProvider? _clientSecretProvider;
+  String? _publishableKey;
+  WebViewConfig? _webViewConfig;
+
+  /// Get the client secret provider for WebView components
+  ClientSecretProvider? get clientSecretProvider => _clientSecretProvider;
+
+  /// Get the publishable key for WebView components
+  String? get publishableKey => _publishableKey;
+
+  /// Get the WebView configuration (null if using native mode)
+  static WebViewConfig? get webViewConfig => instance._webViewConfig;
 
   /// Initialize Stripe Connect with your publishable key
   /// [publishableKey] - Your Stripe publishable key
   /// [clientSecretProvider] - Async function that fetches a client secret from your server
   /// [appearance] - Optional appearance customization (only used on web)
+  /// [webViewConfig] - Optional WebView configuration for mobile platforms
+  ///   When provided, components will render via WebView instead of native SDK
   Future<void> initialize({
     required String publishableKey,
     required ClientSecretProvider clientSecretProvider,
     ConnectAppearance? appearance,
+    WebViewConfig? webViewConfig,
   }) async {
     _clientSecretProvider = clientSecretProvider;
+    _publishableKey = publishableKey;
+    _webViewConfig = webViewConfig;
 
     if (kIsWeb) {
       // Use web-specific initialization
@@ -39,12 +56,14 @@ class StripeConnect {
       return;
     }
 
-    // Native platform initialization
-    _channel.setMethodCallHandler(_handleMethodCall);
+    // Native platform initialization (only if not using WebView mode)
+    if (webViewConfig == null) {
+      _channel.setMethodCallHandler(_handleMethodCall);
 
-    await _channel.invokeMethod('initialize', {
-      'publishableKey': publishableKey,
-    });
+      await _channel.invokeMethod('initialize', {
+        'publishableKey': publishableKey,
+      });
+    }
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {

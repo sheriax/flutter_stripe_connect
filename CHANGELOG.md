@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.2.1
+
+* Documentation cleanup - replaced example branding with generic placeholders
+* Updated WebView integration guide examples
+
+## 0.2.0
+
+* **WebView Mode** - Added optional WebView-based rendering for all components
+  - New `WebViewConfig` class to configure self-hosted web app URL
+  - Pass `webViewConfig` to `StripeConnect.initialize()` to enable
+  - All 13 components automatically switch to WebView when configured
+* **Tax & Capital on Mobile** - Components previously web-only now work on iOS/Android via WebView mode
+  - `StripeTaxSettings`, `StripeTaxRegistrations` auto-fallback to WebView
+* **New exports**: `StripeConnectWebView`, `StripeConnectPaths`, `WebViewConfig`
+* Added `webview_flutter` dependency for WebView support
+* See `STRIPE_CONNECT_WEBVIEW_INTEGRATION.md` for hosting your own Stripe Connect web app
+
 ## 0.1.0
 
 * **Web Platform Support** - Added full web platform support using Stripe Connect.js
