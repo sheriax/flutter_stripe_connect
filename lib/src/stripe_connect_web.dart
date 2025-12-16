@@ -12,8 +12,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_stripe_connect/flutter_stripe_connect.dart';
 import 'package:web/web.dart' as web;
 
-import 'stripe_connect.dart';
-
 /// JavaScript interop for StripeConnect global object
 @JS('StripeConnect')
 external StripeConnectJS? get stripeConnectGlobal;
