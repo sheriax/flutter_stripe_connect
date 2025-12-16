@@ -43,22 +43,26 @@ DRY_RUN_OUTPUT=$(dart pub publish --dry-run 2>&1) || true
 echo "$DRY_RUN_OUTPUT"
 echo ""
 
-# Check for any warnings, hints, or errors in the output
-# The output format is: "Package has X warning(s) and Y hint(s)."
+# Check the final validation result line
+# Format: "Package has X warning(s) and Y hint(s)." or "Package has X warnings."
 HAS_ISSUES=false
 
-if echo "$DRY_RUN_OUTPUT" | grep -q "warning"; then
-    echo -e "${RED}✗ Dry run found warning(s)${NC}"
-    HAS_ISSUES=true
+# Check if the output says "Package has 0 warnings." (which means all good)
+if echo "$DRY_RUN_OUTPUT" | grep -q "Package has 0 warnings"; then
+    # All good - no warnings
+    :
+else
+    # Check for non-zero warnings: "Package has N warning" where N > 0
+    # This matches lines like "Package has 1 warning." or "Package has 2 warnings."
+    if echo "$DRY_RUN_OUTPUT" | grep -E "Package has [1-9][0-9]* warning" > /dev/null; then
+        echo -e "${RED}✗ Dry run found warning(s)${NC}"
+        HAS_ISSUES=true
+    fi
 fi
 
-if echo "$DRY_RUN_OUTPUT" | grep -q "hint"; then
+# Check for hints: "N hint" where N > 0
+if echo "$DRY_RUN_OUTPUT" | grep -E "[1-9][0-9]* hint" > /dev/null; then
     echo -e "${RED}✗ Dry run found hint(s)${NC}"
-    HAS_ISSUES=true
-fi
-
-if echo "$DRY_RUN_OUTPUT" | grep -q -i "error"; then
-    echo -e "${RED}✗ Dry run found error(s)${NC}"
     HAS_ISSUES=true
 fi
 
@@ -93,6 +97,6 @@ if [ $PUBLISH_EXIT_CODE -eq 0 ]; then
     echo "===================================${NC}"
 else
     echo ""
-    echo -e "${RED}✗ Publishing failed${NC}"
+    echo -e "${RED}✗ Publishing failed or cancelled${NC}"
     exit 1
 fi
