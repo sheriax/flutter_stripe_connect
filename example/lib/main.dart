@@ -45,8 +45,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _initializeStripeConnect() async {
     try {
       // Update this to your Stripe publishable key
-      const String publishableKey =
-          'pk_test_51S8VfeDNmGBmmekGKA8WYt57O1xg5xoefjAKMLrieoe2d539F5xUoWd4xRD0vRgyVppQjIr75pzAln5khchyIDmM00u9bSCJJf';
+      const String publishableKey = 'pk_test_****';
 
       await StripeConnect.instance.initialize(
         publishableKey: publishableKey,
