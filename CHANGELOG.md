@@ -6,6 +6,10 @@
   - Allows customizing URL query parameter names for hosted web apps
   - Defaults to `publishableKey` and `clientSecret` for backward compatibility
   - Example: Use `pk` and `secret` if your web app expects different parameter names
+* **Example App Improvements** - Migrated to `go_router` for web-friendly URL routing
+  - Routes now match the Next.js paths documented in `WEBVIEW_INTEGRATION.md`
+  - Supports direct navigation to `/onboarding`, `/payments`, `/payouts`, etc.
+
 
 ## 0.3.1
 

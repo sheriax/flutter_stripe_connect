@@ -28,6 +28,9 @@ dependencies:
   # HTTP client for API calls
   http: ^1.1.0
 
+  # Router for web-friendly URL routing
+  go_router: ^14.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
