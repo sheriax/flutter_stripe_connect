@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_stripe_connect'
-  s.version          = '0.3.0'
+  s.version          = '0.3.1'
   s.summary          = 'Flutter plugin for Stripe Connect embedded components'
   s.description      = <<-DESC
 A Flutter plugin that wraps the native Stripe Connect SDKs for iOS and Android,

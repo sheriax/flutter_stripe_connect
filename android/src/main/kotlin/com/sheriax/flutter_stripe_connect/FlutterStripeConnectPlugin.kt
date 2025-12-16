@@ -20,6 +20,7 @@ import io.flutter.plugin.platform.PlatformViewFactory
 import com.stripe.android.connect.EmbeddedComponentManager
 import com.stripe.android.connect.AccountOnboardingController
 import com.stripe.android.connect.AccountOnboardingProps
+// AccountManagementListener is not available in Android SDK yet
 import com.stripe.android.connect.PaymentsListener
 import com.stripe.android.connect.PayoutsListener
 import com.stripe.android.connect.StripeComponentController
@@ -273,9 +274,9 @@ class StripeConnectPlatformView(
                     createPlaceholderView("Account Onboarding will open in a modal")
                 }
                 "stripe_account_management" -> {
-                    // Account Management is not available on Android SDK
-                    channel.invokeMethod("onLoadError", "Account Management is not available on Android. Use iOS or Web instead.")
-                    createPlaceholderView("Account Management is not available on Android")
+                    // Account Management is not yet available in the Android Stripe Connect SDK
+                    channel.invokeMethod("onLoadError", "Account Management component is not available on Android. Use the iOS or Web version instead.")
+                    null
                 }
                 "stripe_payouts" -> {
                     manager.createPayoutsView(

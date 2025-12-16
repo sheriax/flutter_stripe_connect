@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,26 @@ typedef OnExitCallback = void Function();
 
 /// Callback for when a component is closed
 typedef OnCloseCallback = void Function();
+
+/// Enum representing the different Stripe Connect component types
+enum StripeConnectViewType {
+  accountOnboarding('stripe_account_onboarding'),
+  accountManagement('stripe_account_management'),
+  payouts('stripe_payouts'),
+  payments('stripe_payments'),
+  notificationBanner('stripe_notification_banner'),
+  balances('stripe_balances'),
+  documents('stripe_documents'),
+  taxSettings('stripe_tax_settings'),
+  taxRegistrations('stripe_tax_registrations'),
+  payoutsList('stripe_payouts_list'),
+  paymentDetails('stripe_payment_details'),
+  payoutDetails('stripe_payout_details'),
+  disputesList('stripe_disputes_list');
+
+  const StripeConnectViewType(this.value);
+  final String value;
+}
 
 /// Account Onboarding component for collecting connected account information
 ///
@@ -78,7 +100,7 @@ class StripeAccountOnboarding extends StatelessWidget {
 
     // Default: Use native platform view
     return _StripeConnectPlatformView(
-      viewType: 'stripe_account_onboarding',
+      viewType: StripeConnectViewType.accountOnboarding,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       onExit: onExit,
@@ -98,6 +120,11 @@ class StripeAccountManagement extends StatelessWidget {
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
+  /// If true, use WebView implementation instead of native SDK.
+  /// Requires [StripeConnect.webViewConfig] to be configured.
+  /// Default is false (uses native component on iOS/Android).
+  final bool useWebView;
+
   const StripeAccountManagement({
     super.key,
     this.onLoaded,
@@ -105,6 +132,7 @@ class StripeAccountManagement extends StatelessWidget {
     this.collectionOptions,
     this.appearance,
     this.gestureRecognizers,
+    this.useWebView = false,
   });
 
   @override
@@ -118,21 +146,44 @@ class StripeAccountManagement extends StatelessWidget {
     }
 
     // WebView mode - Account Management is only available via WebView on mobile
-    final webViewConfig = StripeConnect.webViewConfig;
-    if (webViewConfig != null) {
-      return StripeConnectWebView(
-        config: webViewConfig,
-        componentPath: StripeConnectPaths.accountManagement,
-        onLoaded: onLoaded,
-        onLoadError: onLoadError,
+    if (useWebView) {
+      final webViewConfig = StripeConnect.webViewConfig;
+      if (webViewConfig != null) {
+        return StripeConnectWebView(
+          config: webViewConfig,
+          componentPath: StripeConnectPaths.accountManagement,
+          onLoaded: onLoaded,
+          onLoadError: onLoadError,
+        );
+      }
+      onLoadError?.call(
+        'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()',
+      );
+      return const Center(
+        child: Text(
+          'WebView configuration required',
+        ),
       );
     }
 
-    // Not available on mobile without WebView
+    if (Platform.isIOS) {
+      return _StripeConnectPlatformView(
+        viewType: StripeConnectViewType.accountManagement,
+        onLoaded: onLoaded,
+        onLoadError: onLoadError,
+        appearance: appearance,
+        gestureRecognizers: gestureRecognizers,
+      );
+    }
+
+    // Not available on android without WebView
     onLoadError?.call(
-        'Account Management requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+      'Account Management is not available on android without WebView mode',
+    );
     return const Center(
-      child: Text('Account Management requires WebView mode'),
+      child: Text(
+        'Account Management is not available on android without WebView mode',
+      ),
     );
   }
 }
@@ -190,7 +241,7 @@ class StripePayouts extends StatelessWidget {
 
     // Default: Use native platform view
     return _StripeConnectPlatformView(
-      viewType: 'stripe_payouts',
+      viewType: StripeConnectViewType.payouts,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -252,7 +303,7 @@ class StripePayments extends StatelessWidget {
 
     // Default: Use native platform view
     return _StripeConnectPlatformView(
-      viewType: 'stripe_payments',
+      viewType: StripeConnectViewType.payments,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -706,7 +757,7 @@ class StripeDisputesList extends StatelessWidget {
 
 /// Internal platform view widget for iOS/Android
 class _StripeConnectPlatformView extends StatefulWidget {
-  final String viewType;
+  final StripeConnectViewType viewType;
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
   final OnExitCallback? onExit;
@@ -741,7 +792,7 @@ class _StripeConnectPlatformViewState
 
   void _onPlatformViewCreated(int viewId) {
     _channel = MethodChannel(
-      'flutter_stripe_connect/${widget.viewType}_$viewId',
+      'flutter_stripe_connect/${widget.viewType.value}_$viewId',
     );
     _channel.setMethodCallHandler(_handleMethodCall);
   }
@@ -768,7 +819,7 @@ class _StripeConnectPlatformViewState
   @override
   Widget build(BuildContext context) {
     const viewType = 'flutter_stripe_connect_view';
-    final params = {'componentType': widget.viewType, ..._creationParams};
+    final params = {'componentType': widget.viewType.value, ..._creationParams};
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:

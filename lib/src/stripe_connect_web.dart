@@ -9,6 +9,7 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_stripe_connect/flutter_stripe_connect.dart';
 import 'package:web/web.dart' as web;
 
 import 'stripe_connect.dart';
@@ -183,7 +184,7 @@ class StripeConnectWeb {
   }
 
   /// Create a Connect component element
-  web.HTMLElement? createComponent(String componentType) {
+  web.HTMLElement? createComponent(StripeConnectViewType componentType) {
     if (!_isInitialized || _connectInstance == null) {
       debugPrint('StripeConnectWeb: Not initialized. Call initialize() first.');
       return null;
@@ -201,36 +202,34 @@ class StripeConnectWeb {
   }
 
   /// Map Flutter component type to Connect.js component name
-  String _mapComponentName(String flutterType) {
+  String _mapComponentName(StripeConnectViewType flutterType) {
     switch (flutterType) {
-      case 'stripe_account_onboarding':
+      case StripeConnectViewType.accountOnboarding:
         return 'account-onboarding';
-      case 'stripe_account_management':
+      case StripeConnectViewType.accountManagement:
         return 'account-management';
-      case 'stripe_payments':
+      case StripeConnectViewType.payments:
         return 'payments';
-      case 'stripe_payouts':
+      case StripeConnectViewType.payouts:
         return 'payouts';
-      case 'stripe_notification_banner':
+      case StripeConnectViewType.notificationBanner:
         return 'notification-banner';
-      case 'stripe_balances':
+      case StripeConnectViewType.balances:
         return 'balances';
-      case 'stripe_documents':
+      case StripeConnectViewType.documents:
         return 'documents';
-      case 'stripe_tax_settings':
+      case StripeConnectViewType.taxSettings:
         return 'tax-settings';
-      case 'stripe_tax_registrations':
+      case StripeConnectViewType.taxRegistrations:
         return 'tax-registrations';
-      case 'stripe_payouts_list':
+      case StripeConnectViewType.payoutsList:
         return 'payouts-list';
-      case 'stripe_payment_details':
+      case StripeConnectViewType.paymentDetails:
         return 'payment-details';
-      case 'stripe_payout_details':
+      case StripeConnectViewType.payoutDetails:
         return 'payout-details';
-      case 'stripe_disputes_list':
+      case StripeConnectViewType.disputesList:
         return 'disputes-list';
-      default:
-        return flutterType;
     }
   }
 

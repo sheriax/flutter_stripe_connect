@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.1
+
+* **Android Account Management Fix** - Removed `AccountManagementListener` which doesn't exist in the Android Stripe Connect SDK
+  - Account Management component now shows a helpful error on Android
+  - Use WebView mode or iOS for Account Management on mobile
+* **New `StripeConnectViewType` Enum** - Type-safe component type identifiers
+  - Replaces raw strings for component types in web components
+  - All 13 Stripe Connect component types now available as enum values
+  - Better IDE autocomplete and compile-time safety
+* **Platform Availability Clarification**
+  - Account Management: iOS ✅, Android ❌ (WebView required), Web ✅
+  - Updated component to show clear error message on Android
+
 ## 0.3.0
 
 * **Programmatic Account Onboarding** - New `StripeConnect.presentAccountOnboarding()` static method

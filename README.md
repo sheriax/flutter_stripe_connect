@@ -38,7 +38,7 @@ A Flutter plugin for Stripe Connect embedded components. Easily integrate accoun
 | Account Onboarding | ✅ | ✅ | ✅ | Optional |
 | Payments | ✅ | ✅ | ✅ | Optional |
 | Payouts | ✅ | ✅ | ✅ | Optional |
-| Account Management | ❌ | ❌ | ✅ | Required |
+| Account Management | ✅ | ❌ | ✅ | Required on Android |
 | Notification Banner | ❌ | ❌ | ✅ | Required |
 | Balances | ❌ | ❌ | ✅ | Required |
 | Documents | ❌ | ❌ | ✅ | Required |
@@ -63,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.3.0
+  flutter_stripe_connect: ^0.3.1
 ```
 
 ## Platform Setup

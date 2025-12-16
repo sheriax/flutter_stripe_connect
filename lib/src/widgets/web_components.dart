@@ -11,6 +11,7 @@ import 'package:web/web.dart' as web;
 
 import '../stripe_connect.dart';
 import '../stripe_connect_web.dart';
+import 'connect_components.dart';
 
 /// Counter for generating unique view IDs
 int _viewIdCounter = 0;
@@ -18,7 +19,7 @@ int _viewIdCounter = 0;
 /// Base class for web-specific Stripe Connect components
 class StripeConnectWebView extends StatefulWidget {
   /// The component type identifier
-  final String componentType;
+  final StripeConnectViewType componentType;
 
   /// Called when the component finishes loading
   final VoidCallback? onLoaded;
@@ -59,7 +60,7 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
   void initState() {
     super.initState();
     _viewType =
-        'stripe-connect-${widget.componentType}-${_viewIdCounter++}-${math.Random().nextInt(10000)}';
+        'stripe-connect-${widget.componentType.value}-${_viewIdCounter++}-${math.Random().nextInt(10000)}';
     _registerViewFactory();
   }
 
@@ -103,7 +104,8 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
 
       final component = webInstance.createComponent(widget.componentType);
       if (component == null) {
-        final errorMsg = 'Failed to create ${widget.componentType} component';
+        final errorMsg =
+            'Failed to create ${widget.componentType.value} component';
         debugPrint('StripeConnectWebView: $errorMsg');
         _showError(container, errorMsg);
         widget.onLoadError?.call(errorMsg);
@@ -118,7 +120,7 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
       container.appendChild(component);
 
       debugPrint(
-          'StripeConnectWebView: Component ${widget.componentType} created successfully');
+          'StripeConnectWebView: Component ${widget.componentType.value} created successfully');
       widget.onLoaded?.call();
     } catch (e) {
       final errorMsg = 'Error creating component: $e';
@@ -185,7 +187,7 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_account_onboarding',
+      componentType: StripeConnectViewType.accountOnboarding,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       onExit: onExit,
@@ -210,7 +212,7 @@ class StripeAccountManagementWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_account_management',
+      componentType: StripeConnectViewType.accountManagement,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -234,7 +236,7 @@ class StripePaymentsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_payments',
+      componentType: StripeConnectViewType.payments,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -258,7 +260,7 @@ class StripePayoutsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_payouts',
+      componentType: StripeConnectViewType.payouts,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -282,7 +284,7 @@ class StripeNotificationBannerWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_notification_banner',
+      componentType: StripeConnectViewType.notificationBanner,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -306,7 +308,7 @@ class StripeBalancesWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_balances',
+      componentType: StripeConnectViewType.balances,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -330,7 +332,7 @@ class StripeDocumentsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_documents',
+      componentType: StripeConnectViewType.documents,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -354,7 +356,7 @@ class StripeTaxSettingsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_tax_settings',
+      componentType: StripeConnectViewType.taxSettings,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -378,7 +380,7 @@ class StripeTaxRegistrationsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_tax_registrations',
+      componentType: StripeConnectViewType.taxRegistrations,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -402,7 +404,7 @@ class StripePayoutsListWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_payouts_list',
+      componentType: StripeConnectViewType.payoutsList,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -430,7 +432,7 @@ class StripePaymentDetailsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_payment_details',
+      componentType: StripeConnectViewType.paymentDetails,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -459,7 +461,7 @@ class StripePayoutDetailsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_payout_details',
+      componentType: StripeConnectViewType.payoutDetails,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
@@ -484,7 +486,7 @@ class StripeDisputesListWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StripeConnectWebView(
-      componentType: 'stripe_disputes_list',
+      componentType: StripeConnectViewType.disputesList,
       onLoaded: onLoaded,
       onLoadError: onLoadError,
       appearance: appearance,
