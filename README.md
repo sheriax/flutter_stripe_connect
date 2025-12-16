@@ -33,25 +33,29 @@ A Flutter plugin for Stripe Connect embedded components. Easily integrate accoun
 
 ### Component Availability by Platform
 
-| Component | iOS | Android | Web | WebView Mode |
-|:----------|:---:|:-------:|:---:|:------------:|
-| Account Onboarding | ✅ | ✅ | ✅ | ✅ |
-| Account Management | ✅ | ❌ | ✅ | ✅ |
-| Payments | ✅ | ✅ | ✅ | ✅ |
-| Payouts | ✅ | ✅ | ✅ | ✅ |
-| Notification Banner | ✅ | ⚠️ | ✅ | ✅ |
-| Balances | ✅ | ⚠️ | ✅ | ✅ |
-| Documents | ⚠️ | ⚠️ | ✅ | ✅ |
-| Tax Settings | ❌ | ❌ | ✅ | ✅ |
-| Tax Registrations | ❌ | ❌ | ✅ | ✅ |
-| Disputes List | ✅ | ✅ | ✅ | ✅ |
-| Payment Details | ✅ | ✅ | ✅ | ✅ |
-| Payout Details | ✅ | ✅ | ✅ | ✅ |
-| Payouts List | ✅ | ✅ | ✅ | ✅ |
+| Component | iOS Native | Android Native | Web | Mobile WebView |
+|:----------|:----------:|:--------------:|:---:|:--------------:|
+| Account Onboarding | ✅ | ✅ | ✅ | Optional |
+| Payments | ✅ | ✅ | ✅ | Optional |
+| Payouts | ✅ | ✅ | ✅ | Optional |
+| Account Management | ❌ | ❌ | ✅ | Required |
+| Notification Banner | ❌ | ❌ | ✅ | Required |
+| Balances | ❌ | ❌ | ✅ | Required |
+| Documents | ❌ | ❌ | ✅ | Required |
+| Tax Settings | ❌ | ❌ | ✅ | Required |
+| Tax Registrations | ❌ | ❌ | ✅ | Required |
+| Disputes List | ❌ | ❌ | ✅ | Required |
+| Payment Details | ❌ | ❌ | ✅ | Required |
+| Payout Details | ❌ | ❌ | ✅ | Required |
+| Payouts List | ❌ | ❌ | ✅ | Required |
 
-> **Legend:** ✅ Fully Supported | ⚠️ Limited/Preview | ❌ Not Supported
+> **Legend:** 
+> - ✅ Native SDK supported - uses platform-native component by default
+> - ❌ No native SDK - requires WebView mode on mobile
+> - **Optional**: Component supports both native and WebView (use `useWebView: true` to force WebView)
+> - **Required**: Component requires `webViewConfig` to work on mobile
 >
-> **WebView Mode**: Requires hosting your own web app. See `STRIPE_CONNECT_WEBVIEW_INTEGRATION.md`.
+> See [docs/WEBVIEW_INTEGRATION.md](docs/WEBVIEW_INTEGRATION.md) for WebView mode setup.
 
 ## Installation
 
@@ -59,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.2.2
+  flutter_stripe_connect: ^0.2.3
 ```
 
 ## Platform Setup
@@ -146,7 +150,7 @@ await StripeConnect.instance.initialize(
 );
 ```
 
-> **Note**: WebView mode requires hosting your own Next.js app. See `STRIPE_CONNECT_WEBVIEW_INTEGRATION.md` for setup guide.
+> **Note**: WebView mode requires hosting your own Next.js app. See [docs/WEBVIEW_INTEGRATION.md](docs/WEBVIEW_INTEGRATION.md) for setup guide.
 
 ### 2. Use the Embedded Components
 
@@ -157,6 +161,8 @@ StripeAccountOnboarding(
   onLoaded: () => print('Onboarding loaded'),
   onLoadError: (error) => print('Error: $error'),
   onExit: () => print('User exited onboarding'),
+  // Uses native SDK by default on iOS/Android
+  // Set useWebView: true to force WebView rendering
 )
 ```
 
@@ -277,6 +283,12 @@ app.post('/create-account-session', async (req, res) => {
 - Android: `minSdk 21`
 - iOS: `iOS 15.0+`
 - Web: Modern browsers (Chrome, Firefox, Safari, Edge)
+
+## Documentation
+
+- [WebView Integration Guide](docs/WEBVIEW_INTEGRATION.md) - How to set up WebView mode for full component access
+- [Authentication Flow](docs/AUTHENTICATION.md) - Understanding the Stripe Connect authentication flow
+- [SDK Research](docs/RESEARCH.md) - Technical research notes on the Stripe Connect SDKs
 
 ## License
 

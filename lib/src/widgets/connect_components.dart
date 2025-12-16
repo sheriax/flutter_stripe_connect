@@ -22,12 +22,19 @@ typedef OnExitCallback = void Function();
 typedef OnCloseCallback = void Function();
 
 /// Account Onboarding component for collecting connected account information
+///
+/// Native SDK support: iOS ✓, Android ✓, Web ✓
 class StripeAccountOnboarding extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
   final OnExitCallback? onExit;
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  /// If true, use WebView implementation instead of native SDK.
+  /// Requires [StripeConnect.webViewConfig] to be configured.
+  /// Default is false (uses native component on iOS/Android).
+  final bool useWebView;
 
   const StripeAccountOnboarding({
     super.key,
@@ -36,6 +43,7 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.onExit,
     this.appearance,
     this.gestureRecognizers,
+    this.useWebView = false,
   });
 
   @override
@@ -49,18 +57,26 @@ class StripeAccountOnboarding extends StatelessWidget {
       );
     }
 
-    // WebView mode
-    final webViewConfig = StripeConnect.webViewConfig;
-    if (webViewConfig != null) {
-      return StripeConnectWebView(
-        config: webViewConfig,
-        componentPath: StripeConnectPaths.accountOnboarding,
-        onLoaded: onLoaded,
-        onLoadError: onLoadError,
-        onExit: onExit,
+    // If useWebView is requested, use WebView mode
+    if (useWebView) {
+      final webViewConfig = StripeConnect.webViewConfig;
+      if (webViewConfig != null) {
+        return StripeConnectWebView(
+          config: webViewConfig,
+          componentPath: StripeConnectPaths.accountOnboarding,
+          onLoaded: onLoaded,
+          onLoadError: onLoadError,
+          onExit: onExit,
+        );
+      }
+      onLoadError?.call(
+          'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()');
+      return const Center(
+        child: Text('WebView configuration required'),
       );
     }
 
+    // Default: Use native platform view
     return _StripeConnectPlatformView(
       viewType: 'stripe_account_onboarding',
       onLoaded: onLoaded,
@@ -73,6 +89,8 @@ class StripeAccountOnboarding extends StatelessWidget {
 }
 
 /// Account Management component for connected accounts to manage their account
+///
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripeAccountManagement extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -99,7 +117,7 @@ class StripeAccountManagement extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Account Management is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -110,25 +128,28 @@ class StripeAccountManagement extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_account_management',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
-      extraParams: {
-        if (collectionOptions != null) 'collectionOptions': collectionOptions,
-      },
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Account Management requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Account Management requires WebView mode'),
     );
   }
 }
 
 /// Payouts component for connected accounts to view and manage payouts
+///
+/// Native SDK support: iOS ✓, Android ✓, Web ✓
 class StripePayouts extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  /// If true, use WebView implementation instead of native SDK.
+  /// Requires [StripeConnect.webViewConfig] to be configured.
+  /// Default is false (uses native component on iOS/Android).
+  final bool useWebView;
 
   const StripePayouts({
     super.key,
@@ -136,6 +157,7 @@ class StripePayouts extends StatelessWidget {
     this.onLoadError,
     this.appearance,
     this.gestureRecognizers,
+    this.useWebView = false,
   });
 
   @override
@@ -148,17 +170,25 @@ class StripePayouts extends StatelessWidget {
       );
     }
 
-    // WebView mode
-    final webViewConfig = StripeConnect.webViewConfig;
-    if (webViewConfig != null) {
-      return StripeConnectWebView(
-        config: webViewConfig,
-        componentPath: StripeConnectPaths.payouts,
-        onLoaded: onLoaded,
-        onLoadError: onLoadError,
+    // If useWebView is requested, use WebView mode
+    if (useWebView) {
+      final webViewConfig = StripeConnect.webViewConfig;
+      if (webViewConfig != null) {
+        return StripeConnectWebView(
+          config: webViewConfig,
+          componentPath: StripeConnectPaths.payouts,
+          onLoaded: onLoaded,
+          onLoadError: onLoadError,
+        );
+      }
+      onLoadError?.call(
+          'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()');
+      return const Center(
+        child: Text('WebView configuration required'),
       );
     }
 
+    // Default: Use native platform view
     return _StripeConnectPlatformView(
       viewType: 'stripe_payouts',
       onLoaded: onLoaded,
@@ -170,11 +200,18 @@ class StripePayouts extends StatelessWidget {
 }
 
 /// Payments component for connected accounts to view payments
+///
+/// Native SDK support: iOS ✓, Android ✓, Web ✓
 class StripePayments extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
+  /// If true, use WebView implementation instead of native SDK.
+  /// Requires [StripeConnect.webViewConfig] to be configured.
+  /// Default is false (uses native component on iOS/Android).
+  final bool useWebView;
 
   const StripePayments({
     super.key,
@@ -182,6 +219,7 @@ class StripePayments extends StatelessWidget {
     this.onLoadError,
     this.appearance,
     this.gestureRecognizers,
+    this.useWebView = false,
   });
 
   @override
@@ -194,17 +232,25 @@ class StripePayments extends StatelessWidget {
       );
     }
 
-    // WebView mode
-    final webViewConfig = StripeConnect.webViewConfig;
-    if (webViewConfig != null) {
-      return StripeConnectWebView(
-        config: webViewConfig,
-        componentPath: StripeConnectPaths.payments,
-        onLoaded: onLoaded,
-        onLoadError: onLoadError,
+    // If useWebView is requested, use WebView mode
+    if (useWebView) {
+      final webViewConfig = StripeConnect.webViewConfig;
+      if (webViewConfig != null) {
+        return StripeConnectWebView(
+          config: webViewConfig,
+          componentPath: StripeConnectPaths.payments,
+          onLoaded: onLoaded,
+          onLoadError: onLoadError,
+        );
+      }
+      onLoadError?.call(
+          'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()');
+      return const Center(
+        child: Text('WebView configuration required'),
       );
     }
 
+    // Default: Use native platform view
     return _StripeConnectPlatformView(
       viewType: 'stripe_payments',
       onLoaded: onLoaded,
@@ -217,7 +263,7 @@ class StripePayments extends StatelessWidget {
 
 /// Notification Banner component for showing required actions
 ///
-/// Web only - not available on iOS/Android
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripeNotificationBanner extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -242,7 +288,7 @@ class StripeNotificationBanner extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Notification Banner is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -253,17 +299,18 @@ class StripeNotificationBanner extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_notification_banner',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Notification Banner requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Notification Banner requires WebView mode'),
     );
   }
 }
 
 /// Balances component for showing balance information
+///
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripeBalances extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -288,7 +335,7 @@ class StripeBalances extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Balances is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -299,19 +346,18 @@ class StripeBalances extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_balances',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Balances requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Balances requires WebView mode'),
     );
   }
 }
 
 /// Documents component for showing available documents
 ///
-/// Web only - limited support on iOS/Android
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripeDocuments extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -336,7 +382,7 @@ class StripeDocuments extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Documents is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -347,12 +393,11 @@ class StripeDocuments extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_documents',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Documents requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Documents requires WebView mode'),
     );
   }
 }
@@ -452,6 +497,8 @@ class StripeTaxRegistrations extends StatelessWidget {
 }
 
 /// Payouts List component for showing filterable payout list
+///
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripePayoutsList extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -476,7 +523,7 @@ class StripePayoutsList extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Payouts List is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -487,17 +534,18 @@ class StripePayoutsList extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_payouts_list',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Payouts List requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Payouts List requires WebView mode'),
     );
   }
 }
 
 /// Payment Details component for showing payment details overlay
+///
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripePaymentDetails extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -530,7 +578,7 @@ class StripePaymentDetails extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Payment Details is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -543,18 +591,18 @@ class StripePaymentDetails extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_payment_details',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
-      extraParams: paymentId != null ? {'paymentId': paymentId} : null,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Payment Details requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Payment Details requires WebView mode'),
     );
   }
 }
 
 /// Payout Details component for showing payout details overlay
+///
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripePayoutDetails extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -587,7 +635,7 @@ class StripePayoutDetails extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Payout Details is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -600,18 +648,18 @@ class StripePayoutDetails extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_payout_details',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
-      extraParams: payoutId != null ? {'payoutId': payoutId} : null,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Payout Details requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Payout Details requires WebView mode'),
     );
   }
 }
 
 /// Disputes List component for showing and managing disputes
+///
+/// Native SDK support: Web only - requires WebView on iOS/Android
 class StripeDisputesList extends StatelessWidget {
   final OnLoadCallback? onLoaded;
   final OnLoadErrorCallback? onLoadError;
@@ -636,7 +684,7 @@ class StripeDisputesList extends StatelessWidget {
       );
     }
 
-    // WebView mode
+    // WebView mode - Disputes List is only available via WebView on mobile
     final webViewConfig = StripeConnect.webViewConfig;
     if (webViewConfig != null) {
       return StripeConnectWebView(
@@ -647,12 +695,11 @@ class StripeDisputesList extends StatelessWidget {
       );
     }
 
-    return _StripeConnectPlatformView(
-      viewType: 'stripe_disputes_list',
-      onLoaded: onLoaded,
-      onLoadError: onLoadError,
-      appearance: appearance,
-      gestureRecognizers: gestureRecognizers,
+    // Not available on mobile without WebView
+    onLoadError?.call(
+        'Disputes List requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+    return const Center(
+      child: Text('Disputes List requires WebView mode'),
     );
   }
 }
@@ -673,6 +720,7 @@ class _StripeConnectPlatformView extends StatefulWidget {
     this.onLoadError,
     this.onExit,
     this.appearance,
+    // ignore: unused_element_parameter
     this.extraParams,
     this.gestureRecognizers,
   });

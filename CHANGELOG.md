@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.3
+
+* **Native vs WebView Control** - Added `useWebView` prop to components with native SDK support
+  - `StripeAccountOnboarding`, `StripePayments`, `StripePayouts` now use native SDK by default
+  - Set `useWebView: true` to force WebView rendering (requires `webViewConfig`)
+* **Web-only Components** - Components without native SDK support now require WebView on mobile
+  - `StripeAccountManagement`, `StripeNotificationBanner`, `StripeBalances`, `StripeDocuments`
+  - `StripePayoutsList`, `StripePaymentDetails`, `StripePayoutDetails`, `StripeDisputesList`
+  - These components show a helpful error if `webViewConfig` is not configured on mobile
+* **Documentation** - Reorganized documentation into `docs/` folder
+  - `docs/AUTHENTICATION.md` - Authentication flow documentation
+  - `docs/WEBVIEW_INTEGRATION.md` - WebView mode setup guide
+  - `docs/RESEARCH.md` - SDK research notes
+* Updated component platform availability documentation
+
 ## 0.2.2
 
 * Fixed CocoaPods dependency conflict issues
