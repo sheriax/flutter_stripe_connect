@@ -5,10 +5,11 @@ import StripeConnect
 @_spi(PreviewConnect) import StripeConnect
 @_spi(DashboardOnly) import StripeConnect
 
-public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin {
+public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboardingControllerDelegate {
     private static var channel: FlutterMethodChannel?
     private static var embeddedComponentManager: EmbeddedComponentManager?
     private static weak var registrar: FlutterPluginRegistrar?
+    private var accountOnboardingController: AccountOnboardingController?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         self.registrar = registrar
@@ -34,6 +35,8 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin {
             handleInitialize(call, result: result)
         case "logout":
             handleLogout(result: result)
+        case "presentAccountOnboarding":
+            handlePresentAccountOnboarding(result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -94,6 +97,33 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin {
             topController = presentedController
         }
         return topController
+    }
+    
+    private func handlePresentAccountOnboarding(result: @escaping FlutterResult) {
+        guard let manager = FlutterStripeConnectPlugin.embeddedComponentManager else {
+            result(FlutterError(code: "NOT_INITIALIZED", message: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", details: nil))
+            return
+        }
+        
+        guard let topVC = FlutterStripeConnectPlugin.getTopViewController() else {
+            result(FlutterError(code: "NO_VIEW_CONTROLLER", message: "Could not find top view controller", details: nil))
+            return
+        }
+        
+        let controller = manager.createAccountOnboardingController()
+        controller.delegate = self
+        self.accountOnboardingController = controller
+        controller.present(from: topVC)
+        result(nil)
+    }
+    
+    // MARK: - AccountOnboardingControllerDelegate (for presentAccountOnboarding)
+    public func accountOnboarding(_ accountOnboarding: AccountOnboardingController, didFailLoadWithError error: Error) {
+        FlutterStripeConnectPlugin.channel?.invokeMethod("onAccountOnboardingLoadError", arguments: error.localizedDescription)
+    }
+    
+    public func accountOnboardingDidExit(_ accountOnboarding: AccountOnboardingController) {
+        FlutterStripeConnectPlugin.channel?.invokeMethod("onAccountOnboardingExit", arguments: nil)
     }
 }
 

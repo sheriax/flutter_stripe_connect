@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0
+
+* **Programmatic Account Onboarding** - New `StripeConnect.presentAccountOnboarding()` static method
+  - Trigger onboarding flow from your own UI without embedding the widget
+  - Supports `onExit` and `onLoadError` callbacks
+  - Works on both iOS and Android (Web should use widget)
+* **iOS Native Improvements**
+  - Added `presentAccountOnboarding` method handler
+  - Plugin now conforms to `AccountOnboardingControllerDelegate`
+* **Android Native Improvements**
+  - Normalized method name from `showAccountOnboarding` to `presentAccountOnboarding`
+  - Added `onDismissListener` for exit callback support
+
 ## 0.2.3
 
 * **Native vs WebView Control** - Added `useWebView` prop to components with native SDK support

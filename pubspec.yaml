@@ -2,7 +2,7 @@ name: flutter_stripe_connect
 description: >
   Flutter plugin for Stripe Connect embedded components. Embed account onboarding,
   account management, payouts, and payments UI in your Flutter app.
-version: 0.2.3
+version: 0.3.0
 homepage: https://github.com/sheriax/flutter_stripe_connect
 repository: https://github.com/sheriax/flutter_stripe_connect
 issue_tracker: https://github.com/sheriax/flutter_stripe_connect/issues

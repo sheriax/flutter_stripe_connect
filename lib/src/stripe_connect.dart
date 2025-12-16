@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'models/webview_config.dart';
+import 'widgets/connect_components.dart'
+    show OnExitCallback, OnLoadErrorCallback;
 
 // Conditional import for web support
 import 'stripe_connect_stub.dart'
@@ -20,6 +22,10 @@ class StripeConnect {
   ClientSecretProvider? _clientSecretProvider;
   String? _publishableKey;
   WebViewConfig? _webViewConfig;
+
+  // Callbacks for presentAccountOnboarding
+  static OnExitCallback? _onAccountOnboardingExit;
+  static OnLoadErrorCallback? _onAccountOnboardingLoadError;
 
   /// Get the client secret provider for WebView components
   ClientSecretProvider? get clientSecretProvider => _clientSecretProvider;
@@ -73,6 +79,13 @@ class StripeConnect {
           throw Exception('Client secret provider not set');
         }
         return await _clientSecretProvider!();
+      case 'onAccountOnboardingExit':
+        _onAccountOnboardingExit?.call();
+        break;
+      case 'onAccountOnboardingLoadError':
+        final error = call.arguments as String? ?? 'Unknown error';
+        _onAccountOnboardingLoadError?.call(error);
+        break;
       default:
         throw MissingPluginException('Unknown method ${call.method}');
     }
@@ -85,6 +98,42 @@ class StripeConnect {
       return;
     }
     await _channel.invokeMethod('logout');
+  }
+
+  /// Present the Account Onboarding flow modally.
+  ///
+  /// This allows you to trigger onboarding from your own UI (e.g., a button tap)
+  /// without embedding the [StripeAccountOnboarding] widget.
+  ///
+  /// [onExit] - Called when the user closes the onboarding flow
+  /// [onLoadError] - Called if there's an error loading the onboarding flow
+  ///
+  /// Example:
+  /// ```dart
+  /// await StripeConnect.presentAccountOnboarding(
+  ///   onExit: () => print('User exited onboarding'),
+  ///   onLoadError: (error) => print('Error: $error'),
+  /// );
+  /// ```
+  static Future<void> presentAccountOnboarding({
+    OnExitCallback? onExit,
+    OnLoadErrorCallback? onLoadError,
+  }) async {
+    if (kIsWeb) {
+      onLoadError?.call(
+          'presentAccountOnboarding is not supported on web. Use StripeAccountOnboarding widget instead.');
+      return;
+    }
+
+    // Store callbacks for native to call back
+    _onAccountOnboardingExit = onExit;
+    _onAccountOnboardingLoadError = onLoadError;
+
+    try {
+      await _channel.invokeMethod('presentAccountOnboarding');
+    } on PlatformException catch (e) {
+      onLoadError?.call(e.message ?? 'Unknown error');
+    }
   }
 }
 

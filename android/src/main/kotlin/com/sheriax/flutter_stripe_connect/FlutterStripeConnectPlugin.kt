@@ -128,7 +128,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         when (call.method) {
             "initialize" -> handleInitialize(call, result)
             "logout" -> handleLogout(result)
-            "showAccountOnboarding" -> handleShowAccountOnboarding(result)
+            "presentAccountOnboarding" -> handlePresentAccountOnboarding(result)
             else -> result.notImplemented()
         }
     }
@@ -157,12 +157,12 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         result.success(null)
     }
     
-    private fun handleShowAccountOnboarding(result: MethodChannel.Result) {
+    private fun handlePresentAccountOnboarding(result: MethodChannel.Result) {
         val manager = embeddedComponentManager
         val currentAct = activity
         
         if (manager == null) {
-            result.error("NOT_INITIALIZED", "EmbeddedComponentManager not initialized", null)
+            result.error("NOT_INITIALIZED", "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", null)
             return
         }
         
@@ -176,11 +176,15 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
                 activity = currentAct,
                 title = "Account Onboarding",
                 props = AccountOnboardingProps()
-            )
+            ).apply {
+                onDismissListener = StripeComponentController.OnDismissListener {
+                    channel.invokeMethod("onAccountOnboardingExit", null)
+                }
+            }
             accountOnboardingController?.show()
             result.success(null)
         } catch (e: Exception) {
-            result.error("SHOW_ERROR", e.message, null)
+            result.error("PRESENT_ERROR", e.message, null)
         }
     }
     

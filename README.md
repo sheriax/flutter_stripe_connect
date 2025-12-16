@@ -63,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.2.3
+  flutter_stripe_connect: ^0.3.0
 ```
 
 ## Platform Setup
@@ -156,6 +156,8 @@ await StripeConnect.instance.initialize(
 
 #### Account Onboarding
 
+**Option A: Embed as Widget**
+
 ```dart
 StripeAccountOnboarding(
   onLoaded: () => print('Onboarding loaded'),
@@ -165,6 +167,30 @@ StripeAccountOnboarding(
   // Set useWebView: true to force WebView rendering
 )
 ```
+
+**Option B: Present Programmatically (New in 0.3.0)**
+
+Trigger onboarding from your own UI without embedding the widget:
+
+```dart
+ElevatedButton(
+  onPressed: () async {
+    await StripeConnect.presentAccountOnboarding(
+      onExit: () {
+        print('User exited onboarding');
+        // Navigate back or refresh state
+      },
+      onLoadError: (error) {
+        print('Error: $error');
+        // Show error dialog
+      },
+    );
+  },
+  child: Text('Start Onboarding'),
+)
+```
+
+> **Note**: `presentAccountOnboarding()` is only supported on iOS and Android. On Web, use the `StripeAccountOnboarding` widget.
 
 #### Account Management
 
