@@ -55,7 +55,7 @@ A Flutter plugin for Stripe Connect embedded components. Easily integrate accoun
 > - **Optional**: Component supports both native and WebView (use `useWebView: true` to force WebView)
 > - **Required**: Component requires `webViewConfig` to work on mobile
 >
-> See [docs/WEBVIEW_INTEGRATION.md](docs/WEBVIEW_INTEGRATION.md) for WebView mode setup.
+> See [doc/WEBVIEW_INTEGRATION.md](doc/WEBVIEW_INTEGRATION.md) for WebView mode setup.
 
 ## Installation
 
@@ -150,7 +150,7 @@ await StripeConnect.instance.initialize(
 );
 ```
 
-> **Note**: WebView mode requires hosting your own Next.js app. See [docs/WEBVIEW_INTEGRATION.md](docs/WEBVIEW_INTEGRATION.md) for setup guide.
+> **Note**: WebView mode requires hosting your own Next.js app. See [doc/WEBVIEW_INTEGRATION.md](doc/WEBVIEW_INTEGRATION.md) for setup guide.
 
 ### 2. Use the Embedded Components
 
@@ -286,9 +286,9 @@ app.post('/create-account-session', async (req, res) => {
 
 ## Documentation
 
-- [WebView Integration Guide](docs/WEBVIEW_INTEGRATION.md) - How to set up WebView mode for full component access
-- [Authentication Flow](docs/AUTHENTICATION.md) - Understanding the Stripe Connect authentication flow
-- [SDK Research](docs/RESEARCH.md) - Technical research notes on the Stripe Connect SDKs
+- [WebView Integration Guide](doc/WEBVIEW_INTEGRATION.md) - How to set up WebView mode for full component access
+- [Authentication Flow](doc/AUTHENTICATION.md) - Understanding the Stripe Connect authentication flow
+- [SDK Research](doc/RESEARCH.md) - Technical research notes on the Stripe Connect SDKs
 
 ## License
 

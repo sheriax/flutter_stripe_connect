@@ -9,10 +9,10 @@
   - `StripeAccountManagement`, `StripeNotificationBanner`, `StripeBalances`, `StripeDocuments`
   - `StripePayoutsList`, `StripePaymentDetails`, `StripePayoutDetails`, `StripeDisputesList`
   - These components show a helpful error if `webViewConfig` is not configured on mobile
-* **Documentation** - Reorganized documentation into `docs/` folder
-  - `docs/AUTHENTICATION.md` - Authentication flow documentation
-  - `docs/WEBVIEW_INTEGRATION.md` - WebView mode setup guide
-  - `docs/RESEARCH.md` - SDK research notes
+* **Documentation** - Reorganized documentation into `doc/` folder
+  - `doc/AUTHENTICATION.md` - Authentication flow documentation
+  - `doc/WEBVIEW_INTEGRATION.md` - WebView mode setup guide
+  - `doc/RESEARCH.md` - SDK research notes
 * Updated component platform availability documentation
 
 ## 0.2.2
