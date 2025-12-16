@@ -88,19 +88,27 @@ sequenceDiagram
 
 ### Component Availability Matrix
 
-| Component | iOS | Android | Web |
-|:----------|:---:|:-------:|:---:|
-| **Account Onboarding** | ✅ | ✅ | ✅ |
-| **Account Management** | ✅ | ❌ | ✅ |
-| **Payments** | ✅ | ✅ | ✅ |
-| **Payouts** | ✅ | ✅ | ✅ |
-| **Notification Banner** | ✅ | ⚠️ Limited | ✅ |
-| **Balances** | ✅ | ⚠️ Limited | ✅ |
-| **Documents** | ⚠️ Limited | ⚠️ Limited | ✅ |
-| **Tax Settings** | ❌ | ❌ | ✅ |
-| **Tax Registrations** | ❌ | ❌ | ✅ |
+| Component | iOS Native | Android Native | Web | WebView Fallback |
+|:----------|:----------:|:--------------:|:---:|:----------------:|
+| **Account Onboarding** | ✅ | ✅ | ✅ | Optional |
+| **Payments** | ✅ | ✅ | ✅ | Optional |
+| **Payouts** | ✅ | ✅ | ✅ | Optional |
+| **Account Management** | ❌ | ❌ | ✅ | Required |
+| **Notification Banner** | ❌ | ❌ | ✅ | Required |
+| **Balances** | ❌ | ❌ | ✅ | Required |
+| **Documents** | ❌ | ❌ | ✅ | Required |
+| **Tax Settings** | ❌ | ❌ | ✅ | Required |
+| **Tax Registrations** | ❌ | ❌ | ✅ | Required |
+| **Disputes List** | ❌ | ❌ | ✅ | Required |
+| **Payment Details** | ❌ | ❌ | ✅ | Required |
+| **Payout Details** | ❌ | ❌ | ✅ | Required |
+| **Payouts List** | ❌ | ❌ | ✅ | Required |
 
-> **Legend:** ✅ Fully Supported | ⚠️ Limited/Preview | ❌ Not Supported
+> **Legend:** 
+> - ✅ Native SDK supported - uses platform-native component by default
+> - ❌ No native SDK - requires WebView mode on mobile
+> - **Optional**: Component supports both native and WebView (use `useWebView: true` to force WebView)
+> - **Required**: Component requires `webViewConfig` to work on mobile
 
 ---
 
@@ -165,13 +173,13 @@ flowchart LR
 
 ### Supported Features on iOS
 
-- ✅ Full Account Onboarding flow
-- ✅ Account Management (view/edit account details)
-- ✅ Payments list with details, refunds, disputes
-- ✅ Payouts list with balance information
+- ✅ Account Onboarding flow (native SDK)
+- ✅ Payments list with details (native SDK)
+- ✅ Payouts list with balance information (native SDK)
 - ✅ Customizable appearance (colors, fonts, corner radius)
 - ✅ Delegate callbacks for all events
 - ✅ Automatic locale handling
+- ⚠️ Other components require WebView mode
 
 ---
 
@@ -298,15 +306,18 @@ mindmap
 
 ### What's NOT Supported
 
-| Feature | iOS | Android | Workaround |
-|:--------|:---:|:-------:|:-----------|
-| Account Management | ✅ | ❌ | Use WebView or redirect to web |
-| Custom Fonts in WebView | ✅ | ❌ | Use system fonts on Android |
-| Notification Banner | ✅ | ⚠️ | Check API for pending actions |
-| Tax Components | ❌ | ❌ | Use web interface |
-| Documents Download | ⚠️ | ⚠️ | Use Stripe Dashboard directly |
-| Capital Loans | ❌ | ❌ | Web only |
-| Issuing Cards | ❌ | ❌ | Web only |
+| Feature | iOS Native | Android Native | Workaround |
+|:--------|:----------:|:--------------:|:-----------|
+| Account Onboarding | ✅ | ✅ | - |
+| Payments | ✅ | ✅ | - |
+| Payouts | ✅ | ✅ | - |
+| Account Management | ❌ | ❌ | Use WebView mode |
+| Notification Banner | ❌ | ❌ | Use WebView mode |
+| Balances | ❌ | ❌ | Use WebView mode |
+| Documents | ❌ | ❌ | Use WebView mode |
+| Tax Components | ❌ | ❌ | Use WebView mode |
+| Capital Loans | ❌ | ❌ | Use WebView mode |
+| Issuing Cards | ❌ | ❌ | Use WebView mode |
 
 ---
 
@@ -473,4 +484,5 @@ flowchart TD
 
 ---
 
-*Document prepared for client review - December 2024*
+*Document updated - December 2025 (v0.2.3)*
+

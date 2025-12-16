@@ -94,14 +94,17 @@ sequenceDiagram
 
 | Aspect | Native SDK | WebView Approach |
 |:-------|:-----------|:-----------------|
-| **Account Management** | iOS only, Not on Android | ✅ Available everywhere |
+| **Account Onboarding** | ✅ iOS & Android | ✅ Available |
+| **Payments** | ✅ iOS & Android | ✅ Available |
+| **Payouts** | ✅ iOS & Android | ✅ Available |
+| **Account Management** | ❌ Not available | ✅ Available |
 | **Tax Components** | ❌ Not available | ✅ Available |
 | **Capital/Loans** | ❌ Not available | ✅ Available |
-| **Documents** | Limited | ✅ Full support |
+| **All Other Components** | ❌ Not available | ✅ Available |
 | **Component Parity** | Platform-dependent | ✅ Consistent across all platforms |
 | **Update Frequency** | Requires app update | ✅ Website-side updates |
-| **Maintenance** | Two codebases (iOS/Android) | ✅ Single codebase |
-| **Customization** | Limited | ✅ Full CSS control |
+
+> **Note (v0.2.3+):** For native-supported components (Account Onboarding, Payments, Payouts), you can now use the `useWebView: true` prop to force WebView rendering instead of native SDK.
 
 ---
 
