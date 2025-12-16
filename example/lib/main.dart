@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe_connect/flutter_stripe_connect.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
+  // Use path-based URL strategy for clean URLs (no # in the URL)
+  usePathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -55,137 +58,26 @@ class AppRoutes {
   static const reporting = '/reporting';
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+// ============================================================================
+// App State - Manages initialization state
+// ============================================================================
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
+class AppState extends ChangeNotifier {
+  static final AppState instance = AppState._();
+  AppState._();
 
-class _MyAppState extends State<MyApp> {
   bool _isInitialized = false;
   bool _isLoading = true;
   String? _error;
 
-  GoRouter? _router;
+  bool get isInitialized => _isInitialized;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeStripeConnect();
-  }
-
-  GoRouter get router {
-    // Recreate router when state changes to ensure HomePage gets updated values
-    _router = GoRouter(
-      initialLocation: AppRoutes.home,
-      routes: [
-        // Home
-        GoRoute(
-          path: AppRoutes.home,
-          builder: (context, state) => HomePage(
-            isInitialized: _isInitialized,
-            isLoading: _isLoading,
-            error: _error,
-            onRetry: _initializeStripeConnect,
-          ),
-        ),
-
-        // Onboarding & Compliance
-        GoRoute(
-          path: AppRoutes.onboarding,
-          builder: (context, state) => const OnboardingScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.account,
-          builder: (context, state) => const AccountManagementScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.notifications,
-          builder: (context, state) => const NotificationBannerScreen(),
-        ),
-
-        // Payments
-        GoRoute(
-          path: AppRoutes.payments,
-          builder: (context, state) => const PaymentsScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.paymentDetails,
-          builder: (context, state) {
-            final paymentId = state.uri.queryParameters['id'];
-            return PaymentDetailsScreen(paymentId: paymentId);
-          },
-        ),
-        GoRoute(
-          path: AppRoutes.disputes,
-          builder: (context, state) => const DisputesListScreen(),
-        ),
-
-        // Payouts
-        GoRoute(
-          path: AppRoutes.payouts,
-          builder: (context, state) => const PayoutsScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.payoutDetails,
-          builder: (context, state) {
-            final payoutId = state.uri.queryParameters['id'];
-            return PayoutDetailsScreen(payoutId: payoutId);
-          },
-        ),
-        GoRoute(
-          path: AppRoutes.payoutsList,
-          builder: (context, state) => const PayoutsListScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.balances,
-          builder: (context, state) => const BalancesScreen(),
-        ),
-
-        // Tax
-        GoRoute(
-          path: AppRoutes.taxRegistrations,
-          builder: (context, state) => const TaxRegistrationsScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.taxSettings,
-          builder: (context, state) => const TaxSettingsScreen(),
-        ),
-
-        // Reporting
-        GoRoute(
-          path: AppRoutes.documents,
-          builder: (context, state) => const DocumentsScreen(),
-        ),
-      ],
-      errorBuilder: (context, state) => Scaffold(
-        appBar: AppBar(title: const Text('Page Not Found')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Route not found: ${state.uri}'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => context.go(AppRoutes.home),
-                child: const Text('Go Home'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    return _router!;
-  }
-
-  Future<void> _initializeStripeConnect() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+  Future<void> initialize() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
     try {
       const String publishableKey =
@@ -194,24 +86,14 @@ class _MyAppState extends State<MyApp> {
       await StripeConnect.instance.initialize(
         publishableKey: publishableKey,
         clientSecretProvider: _fetchClientSecret,
-        // Uncomment to enable WebView mode with custom URL params
-        // webViewConfig: WebViewConfig(
-        //   baseUrl: 'https://connect.yourapp.com',
-        //   theme: 'light',
-        //   primaryColor: '#635BFF',
-        //   publishableKeyParam: 'pk',
-        //   clientSecretParam: 'secret',
-        // ),
       );
-      setState(() {
-        _isInitialized = true;
-        _isLoading = false;
-      });
+      _isInitialized = true;
+      _isLoading = false;
+      notifyListeners();
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -237,6 +119,132 @@ class _MyAppState extends State<MyApp> {
       rethrow;
     }
   }
+}
+
+// ============================================================================
+// Router Configuration
+// ============================================================================
+
+final GoRouter appRouter = GoRouter(
+  initialLocation: AppRoutes.home,
+  refreshListenable: AppState.instance,
+  routes: [
+    // Home
+    GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) => HomePage(
+        isInitialized: AppState.instance.isInitialized,
+        isLoading: AppState.instance.isLoading,
+        error: AppState.instance.error,
+        onRetry: AppState.instance.initialize,
+      ),
+    ),
+
+    // Onboarding & Compliance
+    GoRoute(
+      path: AppRoutes.onboarding,
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.account,
+      builder: (context, state) => const AccountManagementScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.notifications,
+      builder: (context, state) => const NotificationBannerScreen(),
+    ),
+
+    // Payments
+    GoRoute(
+      path: AppRoutes.payments,
+      builder: (context, state) => const PaymentsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.paymentDetails,
+      builder: (context, state) {
+        final paymentId = state.uri.queryParameters['id'];
+        return PaymentDetailsScreen(paymentId: paymentId);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.disputes,
+      builder: (context, state) => const DisputesListScreen(),
+    ),
+
+    // Payouts
+    GoRoute(
+      path: AppRoutes.payouts,
+      builder: (context, state) => const PayoutsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.payoutDetails,
+      builder: (context, state) {
+        final payoutId = state.uri.queryParameters['id'];
+        return PayoutDetailsScreen(payoutId: payoutId);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.payoutsList,
+      builder: (context, state) => const PayoutsListScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.balances,
+      builder: (context, state) => const BalancesScreen(),
+    ),
+
+    // Tax
+    GoRoute(
+      path: AppRoutes.taxRegistrations,
+      builder: (context, state) => const TaxRegistrationsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.taxSettings,
+      builder: (context, state) => const TaxSettingsScreen(),
+    ),
+
+    // Reporting
+    GoRoute(
+      path: AppRoutes.documents,
+      builder: (context, state) => const DocumentsScreen(),
+    ),
+  ],
+  errorBuilder: (context, state) => Scaffold(
+    appBar: AppBar(title: const Text('Page Not Found')),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
+          const SizedBox(height: 16),
+          Text('Route not found: ${state.uri}'),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => context.go(AppRoutes.home),
+            child: const Text('Go Home'),
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
+// ============================================================================
+// App Widget
+// ============================================================================
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    AppState.instance.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +254,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routerConfig: router,
+      routerConfig: appRouter,
     );
   }
 }
