@@ -132,12 +132,7 @@ final GoRouter appRouter = GoRouter(
     // Home
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => HomePage(
-        isInitialized: AppState.instance.isInitialized,
-        isLoading: AppState.instance.isLoading,
-        error: AppState.instance.error,
-        onRetry: AppState.instance.initialize,
-      ),
+      builder: (context, state) => const HomePage(),
     ),
 
     // Onboarding & Compliance
@@ -260,19 +255,29 @@ class _MyAppState extends State<MyApp> {
 }
 
 // Home Page
-class HomePage extends StatelessWidget {
-  final bool isInitialized;
-  final bool isLoading;
-  final String? error;
-  final VoidCallback onRetry;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-  const HomePage({
-    super.key,
-    required this.isInitialized,
-    required this.isLoading,
-    this.error,
-    required this.onRetry,
-  });
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    AppState.instance.addListener(_onStateChange);
+  }
+
+  @override
+  void dispose() {
+    AppState.instance.removeListener(_onStateChange);
+    super.dispose();
+  }
+
+  void _onStateChange() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -296,11 +301,13 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    if (isLoading) {
+    final appState = AppState.instance;
+
+    if (appState.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (error != null) {
+    if (appState.error != null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -309,10 +316,10 @@ class HomePage extends StatelessWidget {
             children: [
               const Icon(Icons.error, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Error: $error', textAlign: TextAlign.center),
+              Text('Error: ${appState.error}', textAlign: TextAlign.center),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: onRetry,
+                onPressed: appState.initialize,
                 icon: const Icon(Icons.refresh),
                 label: const Text('Retry'),
               ),
@@ -322,7 +329,7 @@ class HomePage extends StatelessWidget {
       );
     }
 
-    if (!isInitialized) {
+    if (!appState.isInitialized) {
       return const Center(child: Text('Not initialized'));
     }
 
