@@ -13,10 +13,26 @@ class WebViewConfig {
   /// Primary brand color (hex string, e.g., '#635BFF')
   final String? primaryColor;
 
+  /// The URL query parameter name for the publishable key.
+  /// Defaults to 'publishableKey'.
+  ///
+  /// Use this if your hosted web app expects a different parameter name,
+  /// e.g., 'pk' instead of 'publishableKey'.
+  final String publishableKeyParam;
+
+  /// The URL query parameter name for the client secret.
+  /// Defaults to 'clientSecret'.
+  ///
+  /// Use this if your hosted web app expects a different parameter name,
+  /// e.g., 'secret' instead of 'clientSecret'.
+  final String clientSecretParam;
+
   const WebViewConfig({
     required this.baseUrl,
     this.theme,
     this.primaryColor,
+    this.publishableKeyParam = 'publishableKey',
+    this.clientSecretParam = 'clientSecret',
   });
 
   /// Builds the full URL for a component
@@ -27,8 +43,8 @@ class WebViewConfig {
     Map<String, String>? extraParams,
   }) {
     final queryParams = <String, String>{
-      'publishableKey': publishableKey,
-      'clientSecret': clientSecret,
+      publishableKeyParam: publishableKey,
+      clientSecretParam: clientSecret,
       if (theme != null) 'theme': theme!,
       if (primaryColor != null) 'primaryColor': primaryColor!,
       ...?extraParams,

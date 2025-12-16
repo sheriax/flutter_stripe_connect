@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.2
+
+* **Customizable WebView URL Parameters** - New `publishableKeyParam` and `clientSecretParam` options in `WebViewConfig`
+  - Allows customizing URL query parameter names for hosted web apps
+  - Defaults to `publishableKey` and `clientSecret` for backward compatibility
+  - Example: Use `pk` and `secret` if your web app expects different parameter names
+
 ## 0.3.1
 
 * **Android Account Management Fix** - Removed `AccountManagementListener` which doesn't exist in the Android Stripe Connect SDK

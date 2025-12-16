@@ -63,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.3.1
+  flutter_stripe_connect: ^0.3.2
 ```
 
 ## Platform Setup
@@ -146,6 +146,9 @@ await StripeConnect.instance.initialize(
     baseUrl: 'https://connect.yourapp.com',  // Your hosted web app
     theme: 'light',
     primaryColor: '#635BFF',
+    // Optional: Customize URL parameter names if your web app uses different names
+    // publishableKeyParam: 'pk',      // defaults to 'publishableKey'
+    // clientSecretParam: 'secret',    // defaults to 'clientSecret'
   ),
 );
 ```
