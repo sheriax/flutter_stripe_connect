@@ -62,14 +62,12 @@ class StripeConnect {
       return;
     }
 
-    // Native platform initialization (only if not using WebView mode)
-    if (webViewConfig == null) {
-      _channel.setMethodCallHandler(_handleMethodCall);
+    // Native platform initialization - always initialize to support both modes
+    _channel.setMethodCallHandler(_handleMethodCall);
 
-      await _channel.invokeMethod('initialize', {
-        'publishableKey': publishableKey,
-      });
-    }
+    await _channel.invokeMethod('initialize', {
+      'publishableKey': publishableKey,
+    });
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {

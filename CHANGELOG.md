@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.3
+
+* **Native SDK Always Initialized** - Native SDK (`EmbeddedComponentManager`) now initializes regardless of `webViewConfig`
+  - Fixes "EmbeddedComponentManager not initialized" error when using native components with `webViewConfig`
+  - Users can now freely mix native and WebView components in the same app
+  - No breaking changes - existing code continues to work
+
 ## 0.3.2
 
 * **Customizable WebView URL Parameters** - New `publishableKeyParam` and `clientSecretParam` options in `WebViewConfig`
