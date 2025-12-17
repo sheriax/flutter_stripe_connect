@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.5
+
+* **Swift Package Manager Support** - Added SPM support for iOS to improve pub.dev scoring
+  - New `Package.swift` file for SPM-based dependency resolution
+  - Plugin now supports both CocoaPods and Swift Package Manager
+  - Added `PrivacyInfo.xcprivacy` to SPM resources
+
 ## 0.3.4
 
 * **Fixed iOS Release Build Authentication Error** - Resolved "Something went wrong" error in TestFlight/Release builds

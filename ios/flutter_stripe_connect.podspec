@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_stripe_connect'
-  s.version          = '0.3.4'
+  s.version          = '0.3.5'
   s.summary          = 'Flutter plugin for Stripe Connect embedded components'
   s.description      = <<-DESC
 A Flutter plugin that wraps the native Stripe Connect SDKs for iOS and Android,
@@ -10,7 +10,7 @@ providing embedded components for account onboarding, management, and payouts.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Sheriax Solutions' => 'youhana.sheriff@sheriax.com' }
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
+  s.source_files     = 'flutter_stripe_connect/Sources/flutter_stripe_connect/**/*.swift'
   
   s.dependency 'Flutter'
   s.dependency 'StripeConnect', '~> 24.0'
