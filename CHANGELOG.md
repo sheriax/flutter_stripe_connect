@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.4
+
+* **Fixed iOS Release Build Authentication Error** - Resolved "Something went wrong" error in TestFlight/Release builds
+  - Client secrets are now always fetched fresh for each Stripe SDK request
+  - Removed any caching/deduplication that could cause secret reuse
+  - Each embedded component (Payouts, Payments, AccountManagement) now correctly authenticates
+
 ## 0.3.3
 
 * **Native SDK Always Initialized** - Native SDK (`EmbeddedComponentManager`) now initializes regardless of `webViewConfig`

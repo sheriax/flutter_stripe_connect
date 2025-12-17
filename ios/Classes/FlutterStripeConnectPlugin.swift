@@ -5,6 +5,9 @@ import StripeConnect
 @_spi(PreviewConnect) import StripeConnect
 @_spi(DashboardOnly) import StripeConnect
 
+// NOTE: Client secrets are single-use. Each fetchClientSecret call MUST return a fresh secret.
+// Never cache or deduplicate these requests.
+
 public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboardingControllerDelegate {
     private static var channel: FlutterMethodChannel?
     private static var embeddedComponentManager: EmbeddedComponentManager?
@@ -52,12 +55,13 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         // Configure the Stripe API client with the publishable key
         STPAPIClient.shared.publishableKey = publishableKey
         
-        // Create the embedded component manager
+        // Create the embedded component manager - ALWAYS fetch fresh secrets (no caching!)
         FlutterStripeConnectPlugin.embeddedComponentManager = EmbeddedComponentManager(
             fetchClientSecret: { [weak self] in
-                await self?.fetchClientSecret()
+                return await self?.fetchClientSecretFromFlutter()
             }
         )
+        
         result(nil)
     }
     
@@ -66,7 +70,8 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         result(nil)
     }
     
-    private func fetchClientSecret() async -> String? {
+    /// Fetches a fresh client secret from Flutter - NEVER cache these!
+    private func fetchClientSecretFromFlutter() async -> String? {
         return await withCheckedContinuation { continuation in
             DispatchQueue.main.async {
                 FlutterStripeConnectPlugin.channel?.invokeMethod("fetchClientSecret", arguments: nil) { response in
