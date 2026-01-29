@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.6
+
+* **Updated iOS Dependency** - Pinned `StripeConnect` dependency to `~> 25.0`
+  - Ensures compatibility with the latest Stripe iOS SDK features (Accounts v2 support)
+* **Updated Android Dependency** - Upgraded `com.stripe:connect` to `22.7.0`
+  - Includes `EmbeddedErrorType` for better error handling stability
+  - Verified no breaking changes for current plugin implementation
+
 ## 0.3.5
 
 * **Swift Package Manager Support** - Added SPM support for iOS to improve pub.dev scoring
