@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../models/webview_config.dart';
@@ -82,6 +84,11 @@ class StripeConnectWebView extends StatefulWidget {
   /// Extra query parameters to pass to the URL
   final Map<String, String>? extraParams;
 
+  /// Set of gesture recognizers to forward to the WebView.
+  /// If not provided, defaults to vertical and horizontal drag recognizers
+  /// to enable scrolling within the WebView content.
+  final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
+
   const StripeConnectWebView({
     super.key,
     required this.componentPath,
@@ -91,6 +98,7 @@ class StripeConnectWebView extends StatefulWidget {
     this.onExit,
     this.onClose,
     this.extraParams,
+    this.gestureRecognizers,
   });
 
   @override
@@ -256,7 +264,16 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
 
     return Stack(
       children: [
-        WebViewWidget(controller: _controller),
+        WebViewWidget(
+          controller: _controller,
+          gestureRecognizers: widget.gestureRecognizers ??
+              <Factory<OneSequenceGestureRecognizer>>{
+                Factory<VerticalDragGestureRecognizer>(
+                    () => VerticalDragGestureRecognizer()),
+                Factory<HorizontalDragGestureRecognizer>(
+                    () => HorizontalDragGestureRecognizer()),
+              },
+        ),
         if (_isLoading) const Center(child: CircularProgressIndicator()),
       ],
     );

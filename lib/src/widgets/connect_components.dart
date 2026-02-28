@@ -89,6 +89,7 @@ class StripeAccountOnboarding extends StatelessWidget {
           onLoaded: onLoaded,
           onLoadError: onLoadError,
           onExit: onExit,
+          gestureRecognizers: gestureRecognizers,
         );
       }
       onLoadError?.call(
@@ -154,6 +155,7 @@ class StripeAccountManagement extends StatelessWidget {
           componentPath: StripeConnectPaths.accountManagement,
           onLoaded: onLoaded,
           onLoadError: onLoadError,
+          gestureRecognizers: gestureRecognizers,
         );
       }
       onLoadError?.call(
@@ -230,6 +232,7 @@ class StripePayouts extends StatelessWidget {
           componentPath: StripeConnectPaths.payouts,
           onLoaded: onLoaded,
           onLoadError: onLoadError,
+          gestureRecognizers: gestureRecognizers,
         );
       }
       onLoadError?.call(
@@ -292,6 +295,7 @@ class StripePayments extends StatelessWidget {
           componentPath: StripeConnectPaths.payments,
           onLoaded: onLoaded,
           onLoadError: onLoadError,
+          gestureRecognizers: gestureRecognizers,
         );
       }
       onLoadError?.call(

@@ -75,7 +75,8 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
           ..width = '100%'
           ..height = '100%'
           ..display = 'flex'
-          ..flexDirection = 'column';
+          ..flexDirection = 'column'
+          ..overflow = 'auto';
 
         // Schedule component creation after the container is added to DOM
         _createComponentAsync(container);
