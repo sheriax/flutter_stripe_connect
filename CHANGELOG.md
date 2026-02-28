@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.7
+
+* **Fixed Scroll Issue on Flutter Web & WebView** ([#3](https://github.com/sheriax/flutter_stripe_connect/issues/3))
+  - Added `overflow: auto` to web component container so Stripe content scrolls properly on Flutter Web
+  - Added default `gestureRecognizers` (vertical + horizontal drag) to `StripeConnectWebView` so scroll gestures pass through to the WebView on mobile
+  - `gestureRecognizers` now correctly forwarded in `useWebView` mode for all components
+
 ## 0.3.6
 
 * **Updated iOS Dependency** - Pinned `StripeConnect` dependency to `~> 25.0`
