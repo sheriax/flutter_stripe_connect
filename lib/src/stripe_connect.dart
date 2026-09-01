@@ -40,7 +40,9 @@ class StripeConnect {
   /// Initialize Stripe Connect with your publishable key
   /// [publishableKey] - Your Stripe publishable key
   /// [clientSecretProvider] - Async function that fetches a client secret from your server
-  /// [appearance] - Optional appearance customization (only used on web)
+  /// [appearance] - Optional appearance customization. Applies to every
+  ///   component created from this instance; change it later with
+  ///   [updateAppearance].
   /// [webViewConfig] - Optional WebView configuration for mobile platforms
   ///   When provided, components will render via WebView instead of native SDK
   Future<void> initialize({
@@ -68,6 +70,23 @@ class StripeConnect {
 
     await _channel.invokeMethod('initialize', {
       'publishableKey': publishableKey,
+      if (appearance != null) 'appearance': appearance.toMap(),
+    });
+  }
+
+  /// Restyle the components created from this instance.
+  ///
+  /// Appearance belongs to the Stripe instance rather than to an individual
+  /// component, so this reaches every component already on screen as well as
+  /// the ones created afterwards.
+  Future<void> updateAppearance(ConnectAppearance appearance) async {
+    if (kIsWeb) {
+      web_impl.StripeConnectWeb.instance.updateAppearance(appearance);
+      return;
+    }
+
+    await _channel.invokeMethod('updateAppearance', {
+      'appearance': appearance.toMap(),
     });
   }
 

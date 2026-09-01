@@ -56,6 +56,40 @@ class StripeConnectWeb {
   /// Check if Connect.js is loaded
   bool get isLoaded => stripeConnectGlobal != null;
 
+  /// Maps [ConnectAppearance] onto the appearance object Connect.js takes.
+  JSObject? _appearanceObject(ConnectAppearance? appearance) {
+    if (appearance == null) return null;
+
+    final variables = JSObject();
+    if (appearance.fontFamily != null) {
+      variables['fontFamily'] = appearance.fontFamily!.toJS;
+    }
+    if (appearance.colors?.primary != null) {
+      variables['colorPrimary'] = appearance.colors!.primary!.toJS;
+    }
+    if (appearance.colors?.background != null) {
+      variables['colorBackground'] = appearance.colors!.background!.toJS;
+    }
+    if (appearance.colors?.text != null) {
+      variables['colorText'] = appearance.colors!.text!.toJS;
+    }
+    if (appearance.colors?.secondaryText != null) {
+      variables['colorSecondaryText'] = appearance.colors!.secondaryText!.toJS;
+    }
+    if (appearance.colors?.border != null) {
+      variables['colorBorder'] = appearance.colors!.border!.toJS;
+    }
+    if (appearance.cornerRadius != null) {
+      variables['borderRadius'] = appearance.cornerRadius!.toString().toJS;
+    }
+
+    final appearanceObject = JSObject();
+    appearanceObject['overlays'] = 'dialog'.toJS;
+    appearanceObject['variables'] = variables;
+
+    return appearanceObject;
+  }
+
   /// Check if initialized
   bool get isInitialized => _isInitialized;
 
@@ -82,35 +116,9 @@ class StripeConnectWeb {
     options['fetchClientSecret'] = fetchClientSecretJS;
 
     // Build appearance options if provided
-    if (appearance != null) {
-      final variables = JSObject();
-      if (appearance.fontFamily != null) {
-        variables['fontFamily'] = appearance.fontFamily!.toJS;
-      }
-      if (appearance.colors?.primary != null) {
-        variables['colorPrimary'] = appearance.colors!.primary!.toJS;
-      }
-      if (appearance.colors?.background != null) {
-        variables['colorBackground'] = appearance.colors!.background!.toJS;
-      }
-      if (appearance.colors?.text != null) {
-        variables['colorText'] = appearance.colors!.text!.toJS;
-      }
-      if (appearance.colors?.secondaryText != null) {
-        variables['colorSecondaryText'] =
-            appearance.colors!.secondaryText!.toJS;
-      }
-      if (appearance.colors?.border != null) {
-        variables['colorBorder'] = appearance.colors!.border!.toJS;
-      }
-      if (appearance.cornerRadius != null) {
-        variables['borderRadius'] = appearance.cornerRadius!.toString().toJS;
-      }
-
-      final appearanceObj = JSObject();
-      appearanceObj['overlays'] = 'dialog'.toJS;
-      appearanceObj['variables'] = variables;
-      options['appearance'] = appearanceObj;
+    final appearanceObject = _appearanceObject(appearance);
+    if (appearanceObject != null) {
+      options['appearance'] = appearanceObject;
     }
 
     // Initialize Connect.js
@@ -283,40 +291,21 @@ class StripeConnectWeb {
     }
   }
 
-  /// Update appearance
+  /// Restyle every component created from this instance.
   void updateAppearance(ConnectAppearance appearance) {
-    if (!_isInitialized || _connectInstance == null) return;
-
-    final variables = JSObject();
-    if (appearance.fontFamily != null) {
-      variables['fontFamily'] = appearance.fontFamily!.toJS;
-    }
-    if (appearance.colors?.primary != null) {
-      variables['colorPrimary'] = appearance.colors!.primary!.toJS;
-    }
-    if (appearance.colors?.background != null) {
-      variables['colorBackground'] = appearance.colors!.background!.toJS;
-    }
-    if (appearance.colors?.text != null) {
-      variables['colorText'] = appearance.colors!.text!.toJS;
-    }
-    if (appearance.colors?.secondaryText != null) {
-      variables['colorSecondaryText'] = appearance.colors!.secondaryText!.toJS;
-    }
-    if (appearance.colors?.border != null) {
-      variables['colorBorder'] = appearance.colors!.border!.toJS;
-    }
-    if (appearance.cornerRadius != null) {
-      variables['borderRadius'] = appearance.cornerRadius!.toString().toJS;
+    final instance = _connectInstance;
+    if (!_isInitialized || instance == null) {
+      debugPrint('StripeConnectWeb: Not initialized. Call initialize() first.');
+      return;
     }
 
-    final appearanceObj = JSObject();
-    appearanceObj['variables'] = variables;
+    final appearanceObject = _appearanceObject(appearance);
+    if (appearanceObject == null) return;
 
     final options = JSObject();
-    options['appearance'] = appearanceObj;
+    options['appearance'] = appearanceObject;
 
-    _connectInstance!.update(options);
+    instance.update(options);
   }
 
   /// Logout and clear session
