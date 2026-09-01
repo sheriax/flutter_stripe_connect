@@ -115,8 +115,13 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             return
         }
         
+        let args = call.arguments as? [String: Any]
         let controller = manager.createAccountOnboardingController(
-            collectionOptions: AccountOnboardingArguments.collectionOptions(from: call.arguments as? [String: Any])
+            fullTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "fullTermsOfServiceUrl"),
+            recipientTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "recipientTermsOfServiceUrl"),
+            privacyPolicyUrl: AccountOnboardingArguments.url(from: args, key: "privacyPolicyUrl"),
+            skipTermsOfServiceCollection: args?["skipTermsOfServiceCollection"] as? Bool,
+            collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
         )
         controller.delegate = self
         self.accountOnboardingController = controller
@@ -154,6 +159,11 @@ enum AccountOnboardingArguments {
         }
         
         return options
+    }
+    
+    static func url(from args: [String: Any]?, key: String) -> URL? {
+        guard let value = args?[key] as? String else { return nil }
+        return URL(string: value)
     }
 }
 
@@ -265,6 +275,10 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         hideLoading()
         
         let controller = manager.createAccountOnboardingController(
+            fullTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "fullTermsOfServiceUrl"),
+            recipientTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "recipientTermsOfServiceUrl"),
+            privacyPolicyUrl: AccountOnboardingArguments.url(from: args, key: "privacyPolicyUrl"),
+            skipTermsOfServiceCollection: args["skipTermsOfServiceCollection"] as? Bool,
             collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
         )
         controller.delegate = self

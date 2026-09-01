@@ -40,6 +40,18 @@ class StripeConnectWebView extends StatefulWidget {
   /// Which requirements account onboarding collects
   final AccountCollectionOptions? collectionOptions;
 
+  /// URL to your full terms of service agreement
+  final String? fullTermsOfServiceUrl;
+
+  /// URL to your recipient terms of service agreement
+  final String? recipientTermsOfServiceUrl;
+
+  /// Absolute URL to your privacy policy
+  final String? privacyPolicyUrl;
+
+  /// Whether onboarding skips terms of service collection
+  final bool? skipTermsOfServiceCollection;
+
   const StripeConnectWebView({
     super.key,
     required this.componentType,
@@ -49,6 +61,10 @@ class StripeConnectWebView extends StatefulWidget {
     this.appearance,
     this.extraParams,
     this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
   });
 
   @override
@@ -111,6 +127,10 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
       final component = webInstance.createComponent(
         widget.componentType,
         collectionOptions: widget.collectionOptions,
+        fullTermsOfServiceUrl: widget.fullTermsOfServiceUrl,
+        recipientTermsOfServiceUrl: widget.recipientTermsOfServiceUrl,
+        privacyPolicyUrl: widget.privacyPolicyUrl,
+        skipTermsOfServiceCollection: widget.skipTermsOfServiceCollection,
       );
       if (component == null) {
         final errorMsg =
@@ -185,6 +205,10 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
   final VoidCallback? onExit;
   final ConnectAppearance? appearance;
   final AccountCollectionOptions? collectionOptions;
+  final String? fullTermsOfServiceUrl;
+  final String? recipientTermsOfServiceUrl;
+  final String? privacyPolicyUrl;
+  final bool? skipTermsOfServiceCollection;
 
   const StripeAccountOnboardingWeb({
     super.key,
@@ -193,6 +217,10 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
     this.onExit,
     this.appearance,
     this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
   });
 
   @override
@@ -204,6 +232,10 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
       onExit: onExit,
       appearance: appearance,
       collectionOptions: collectionOptions,
+      fullTermsOfServiceUrl: fullTermsOfServiceUrl,
+      recipientTermsOfServiceUrl: recipientTermsOfServiceUrl,
+      privacyPolicyUrl: privacyPolicyUrl,
+      skipTermsOfServiceCollection: skipTermsOfServiceCollection,
     );
   }
 }

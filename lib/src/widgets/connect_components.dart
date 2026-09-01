@@ -61,6 +61,20 @@ class StripeAccountOnboarding extends StatelessWidget {
   /// what it collects.
   final AccountCollectionOptions? collectionOptions;
 
+  /// URL to your full terms of service agreement, shown in place of Stripe's
+  /// own link.
+  final String? fullTermsOfServiceUrl;
+
+  /// URL to your recipient terms of service agreement.
+  final String? recipientTermsOfServiceUrl;
+
+  /// Absolute URL to your privacy policy.
+  final String? privacyPolicyUrl;
+
+  /// If true, onboarding skips terms of service collection and you must
+  /// collect acceptance yourself.
+  final bool? skipTermsOfServiceCollection;
+
   /// If true, use WebView implementation instead of native SDK.
   /// Requires [StripeConnect.webViewConfig] to be configured.
   /// Default is false (uses native component on iOS/Android).
@@ -74,6 +88,10 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.appearance,
     this.gestureRecognizers,
     this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
     this.useWebView = false,
   });
 
@@ -86,6 +104,10 @@ class StripeAccountOnboarding extends StatelessWidget {
         onExit: onExit,
         appearance: appearance,
         collectionOptions: collectionOptions,
+        fullTermsOfServiceUrl: fullTermsOfServiceUrl,
+        recipientTermsOfServiceUrl: recipientTermsOfServiceUrl,
+        privacyPolicyUrl: privacyPolicyUrl,
+        skipTermsOfServiceCollection: skipTermsOfServiceCollection,
       );
     }
 
@@ -120,6 +142,13 @@ class StripeAccountOnboarding extends StatelessWidget {
       extraParams: {
         if (collectionOptions != null)
           'collectionOptions': collectionOptions!.toMap(),
+        if (fullTermsOfServiceUrl != null)
+          'fullTermsOfServiceUrl': fullTermsOfServiceUrl,
+        if (recipientTermsOfServiceUrl != null)
+          'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
+        if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
+        if (skipTermsOfServiceCollection != null)
+          'skipTermsOfServiceCollection': skipTermsOfServiceCollection,
       },
     );
   }

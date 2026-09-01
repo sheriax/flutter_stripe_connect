@@ -175,9 +175,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
             accountOnboardingController = manager.createAccountOnboardingController(
                 activity = currentAct,
                 title = "Account Onboarding",
-                props = AccountOnboardingProps(
-                    collectionOptions = accountCollectionOptions(call.arguments as? Map<*, *>)
-                )
+                props = accountOnboardingProps(call.arguments as? Map<*, *>)
             ).apply {
                 onDismissListener = StripeComponentController.OnDismissListener {
                     channel.invokeMethod("onAccountOnboardingExit", null)
@@ -261,9 +259,7 @@ class StripeConnectPlatformView(
                         val controller = manager.createAccountOnboardingController(
                             activity = activity,
                             title = "Account Onboarding",
-                            props = AccountOnboardingProps(
-                                collectionOptions = accountCollectionOptions(params)
-                            )
+                            props = accountOnboardingProps(params)
                         ).apply {
                             onDismissListener = StripeComponentController.OnDismissListener {
                                 channel.invokeMethod("onExit", null)
@@ -342,7 +338,20 @@ class StripeConnectPlatformView(
 }
 
 /**
- * Decodes the account onboarding options sent from Dart.
+ * Decodes the account onboarding props sent from Dart.
+ */
+internal fun accountOnboardingProps(args: Map<*, *>?): AccountOnboardingProps {
+    return AccountOnboardingProps(
+        fullTermsOfServiceUrl = args?.get("fullTermsOfServiceUrl") as? String,
+        recipientTermsOfServiceUrl = args?.get("recipientTermsOfServiceUrl") as? String,
+        privacyPolicyUrl = args?.get("privacyPolicyUrl") as? String,
+        skipTermsOfServiceCollection = args?.get("skipTermsOfServiceCollection") as? Boolean,
+        collectionOptions = accountCollectionOptions(args),
+    )
+}
+
+/**
+ * Decodes the account onboarding collection options sent from Dart.
  *
  * `AccountOnboardingProps.CollectionOptions` also takes a `requirements`
  * restriction, but that constructor parameter is `internal` in the Android SDK

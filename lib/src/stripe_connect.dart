@@ -106,6 +106,13 @@ class StripeConnect {
   ///
   /// [collectionOptions] - Which requirements to collect. Currently due
   ///   requirements are always collected; this asks for more on top of them.
+  /// [fullTermsOfServiceUrl] - URL to your full terms of service agreement,
+  ///   shown in place of Stripe's own link.
+  /// [recipientTermsOfServiceUrl] - URL to your recipient terms of service
+  ///   agreement.
+  /// [privacyPolicyUrl] - Absolute URL to your privacy policy.
+  /// [skipTermsOfServiceCollection] - If true, onboarding skips terms of
+  ///   service collection and you must collect acceptance yourself.
   /// [onExit] - Called when the user closes the onboarding flow
   /// [onLoadError] - Called if there's an error loading the onboarding flow
   ///
@@ -122,6 +129,10 @@ class StripeConnect {
   /// ```
   static Future<void> presentAccountOnboarding({
     AccountCollectionOptions? collectionOptions,
+    String? fullTermsOfServiceUrl,
+    String? recipientTermsOfServiceUrl,
+    String? privacyPolicyUrl,
+    bool? skipTermsOfServiceCollection,
     OnExitCallback? onExit,
     OnLoadErrorCallback? onLoadError,
   }) async {
@@ -139,6 +150,13 @@ class StripeConnect {
       await _channel.invokeMethod('presentAccountOnboarding', {
         if (collectionOptions != null)
           'collectionOptions': collectionOptions.toMap(),
+        if (fullTermsOfServiceUrl != null)
+          'fullTermsOfServiceUrl': fullTermsOfServiceUrl,
+        if (recipientTermsOfServiceUrl != null)
+          'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
+        if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
+        if (skipTermsOfServiceCollection != null)
+          'skipTermsOfServiceCollection': skipTermsOfServiceCollection,
       });
     } on PlatformException catch (e) {
       onLoadError?.call(e.message ?? 'Unknown error');

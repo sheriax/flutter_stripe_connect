@@ -15,6 +15,10 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
   final VoidCallback? onExit;
   final ConnectAppearance? appearance;
   final AccountCollectionOptions? collectionOptions;
+  final String? fullTermsOfServiceUrl;
+  final String? recipientTermsOfServiceUrl;
+  final String? privacyPolicyUrl;
+  final bool? skipTermsOfServiceCollection;
 
   const StripeAccountOnboardingWeb({
     super.key,
@@ -23,6 +27,10 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
     this.onExit,
     this.appearance,
     this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
   });
 
   @override
