@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../stripe_connect.dart';
+import '../models/account_collection_options.dart';
 import 'webview_components.dart';
 
 // Conditional import for web support
@@ -53,6 +54,13 @@ class StripeAccountOnboarding extends StatelessWidget {
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
+  /// Which requirements onboarding collects.
+  ///
+  /// Currently due requirements are always collected; this asks for more on
+  /// top of them. Not supported in WebView mode, where the hosted page decides
+  /// what it collects.
+  final AccountCollectionOptions? collectionOptions;
+
   /// If true, use WebView implementation instead of native SDK.
   /// Requires [StripeConnect.webViewConfig] to be configured.
   /// Default is false (uses native component on iOS/Android).
@@ -65,6 +73,7 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.onExit,
     this.appearance,
     this.gestureRecognizers,
+    this.collectionOptions,
     this.useWebView = false,
   });
 
@@ -76,6 +85,7 @@ class StripeAccountOnboarding extends StatelessWidget {
         onLoadError: onLoadError,
         onExit: onExit,
         appearance: appearance,
+        collectionOptions: collectionOptions,
       );
     }
 
@@ -107,6 +117,10 @@ class StripeAccountOnboarding extends StatelessWidget {
       onExit: onExit,
       appearance: appearance,
       gestureRecognizers: gestureRecognizers,
+      extraParams: {
+        if (collectionOptions != null)
+          'collectionOptions': collectionOptions!.toMap(),
+      },
     );
   }
 }
@@ -775,7 +789,6 @@ class _StripeConnectPlatformView extends StatefulWidget {
     this.onLoadError,
     this.onExit,
     this.appearance,
-    // ignore: unused_element_parameter
     this.extraParams,
     this.gestureRecognizers,
   });

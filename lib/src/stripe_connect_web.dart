@@ -182,7 +182,10 @@ class StripeConnectWeb {
   }
 
   /// Create a Connect component element
-  web.HTMLElement? createComponent(StripeConnectViewType componentType) {
+  web.HTMLElement? createComponent(
+    StripeConnectViewType componentType, {
+    AccountCollectionOptions? collectionOptions,
+  }) {
     if (!_isInitialized || _connectInstance == null) {
       debugPrint('StripeConnectWeb: Not initialized. Call initialize() first.');
       return null;
@@ -192,11 +195,35 @@ class StripeConnectWeb {
       // Map Flutter component type to Connect.js component name
       final componentName = _mapComponentName(componentType);
       debugPrint('StripeConnectWeb: Creating component: $componentName');
-      return _connectInstance!.create(componentName);
+      final component = _connectInstance!.create(componentName);
+      _applyCollectionOptions(component, collectionOptions);
+      return component;
     } catch (e) {
       debugPrint('StripeConnectWeb: Error creating component: $e');
       return null;
     }
+  }
+
+  /// Hands the collection options to the component through the
+  /// `setCollectionOptions` setter Connect.js exposes on the element.
+  void _applyCollectionOptions(
+    web.HTMLElement component,
+    AccountCollectionOptions? collectionOptions,
+  ) {
+    if (collectionOptions == null) return;
+
+    const setter = 'setCollectionOptions';
+    if (!component.has(setter)) {
+      debugPrint('StripeConnectWeb: $setter is not available on this component');
+      return;
+    }
+
+    final options = JSObject();
+    options['fields'] = collectionOptions.fields.value.toJS;
+    options['futureRequirements'] =
+        collectionOptions.futureRequirements.value.toJS;
+
+    component.callMethodVarArgs(setter.toJS, [options]);
   }
 
   /// Map Flutter component type to Connect.js component name

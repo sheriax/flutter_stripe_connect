@@ -128,7 +128,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         when (call.method) {
             "initialize" -> handleInitialize(call, result)
             "logout" -> handleLogout(result)
-            "presentAccountOnboarding" -> handlePresentAccountOnboarding(result)
+            "presentAccountOnboarding" -> handlePresentAccountOnboarding(call, result)
             else -> result.notImplemented()
         }
     }
@@ -157,7 +157,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         result.success(null)
     }
     
-    private fun handlePresentAccountOnboarding(result: MethodChannel.Result) {
+    private fun handlePresentAccountOnboarding(call: MethodCall, result: MethodChannel.Result) {
         val manager = embeddedComponentManager
         val currentAct = activity
         
@@ -175,7 +175,9 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
             accountOnboardingController = manager.createAccountOnboardingController(
                 activity = currentAct,
                 title = "Account Onboarding",
-                props = AccountOnboardingProps()
+                props = AccountOnboardingProps(
+                    collectionOptions = accountCollectionOptions(call.arguments as? Map<*, *>)
+                )
             ).apply {
                 onDismissListener = StripeComponentController.OnDismissListener {
                     channel.invokeMethod("onAccountOnboardingExit", null)
@@ -259,7 +261,9 @@ class StripeConnectPlatformView(
                         val controller = manager.createAccountOnboardingController(
                             activity = activity,
                             title = "Account Onboarding",
-                            props = AccountOnboardingProps()
+                            props = AccountOnboardingProps(
+                                collectionOptions = accountCollectionOptions(params)
+                            )
                         ).apply {
                             onDismissListener = StripeComponentController.OnDismissListener {
                                 channel.invokeMethod("onExit", null)
@@ -335,4 +339,33 @@ class StripeConnectPlatformView(
     override fun dispose() {
         containerView.removeAllViews()
     }
+}
+
+/**
+ * Decodes the account onboarding options sent from Dart.
+ *
+ * `AccountOnboardingProps.CollectionOptions` also takes a `requirements`
+ * restriction, but that constructor parameter is `internal` in the Android SDK
+ * and cannot be set from outside it, so only the two public options are
+ * decoded here.
+ */
+internal fun accountCollectionOptions(args: Map<*, *>?): AccountOnboardingProps.CollectionOptions? {
+    val options = args?.get("collectionOptions") as? Map<*, *> ?: return null
+
+    val fields = when (options["fields"]) {
+        "currently_due" -> AccountOnboardingProps.FieldOption.CURRENTLY_DUE
+        "eventually_due" -> AccountOnboardingProps.FieldOption.EVENTUALLY_DUE
+        else -> null
+    }
+
+    val futureRequirements = when (options["futureRequirements"]) {
+        "omit" -> AccountOnboardingProps.FutureRequirementOption.OMIT
+        "include" -> AccountOnboardingProps.FutureRequirementOption.INCLUDE
+        else -> null
+    }
+
+    return AccountOnboardingProps.CollectionOptions(
+        fields = fields,
+        futureRequirements = futureRequirements,
+    )
 }

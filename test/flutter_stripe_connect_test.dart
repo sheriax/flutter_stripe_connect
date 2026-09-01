@@ -36,6 +36,27 @@ void main() {
     });
   });
 
+  group('AccountCollectionOptions', () {
+    test('defaults to what Stripe collects anyway', () {
+      const options = AccountCollectionOptions();
+      final map = options.toMap();
+
+      expect(map['fields'], 'currently_due');
+      expect(map['futureRequirements'], 'omit');
+    });
+
+    test('toMap uses the values Stripe expects', () {
+      const options = AccountCollectionOptions(
+        fields: AccountFieldOption.eventuallyDue,
+        futureRequirements: AccountFutureRequirementOption.include,
+      );
+      final map = options.toMap();
+
+      expect(map['fields'], 'eventually_due');
+      expect(map['futureRequirements'], 'include');
+    });
+  });
+
   group('ConnectColors', () {
     test('toMap returns correct values', () {
       const colors = ConnectColors(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'models/webview_config.dart';
+import 'models/account_collection_options.dart';
 import 'widgets/connect_components.dart'
     show OnExitCallback, OnLoadErrorCallback;
 
@@ -103,17 +104,24 @@ class StripeConnect {
   /// This allows you to trigger onboarding from your own UI (e.g., a button tap)
   /// without embedding the [StripeAccountOnboarding] widget.
   ///
+  /// [collectionOptions] - Which requirements to collect. Currently due
+  ///   requirements are always collected; this asks for more on top of them.
   /// [onExit] - Called when the user closes the onboarding flow
   /// [onLoadError] - Called if there's an error loading the onboarding flow
   ///
   /// Example:
   /// ```dart
   /// await StripeConnect.presentAccountOnboarding(
+  ///   collectionOptions: const AccountCollectionOptions(
+  ///     fields: AccountFieldOption.eventuallyDue,
+  ///     futureRequirements: AccountFutureRequirementOption.include,
+  ///   ),
   ///   onExit: () => print('User exited onboarding'),
   ///   onLoadError: (error) => print('Error: $error'),
   /// );
   /// ```
   static Future<void> presentAccountOnboarding({
+    AccountCollectionOptions? collectionOptions,
     OnExitCallback? onExit,
     OnLoadErrorCallback? onLoadError,
   }) async {
@@ -128,7 +136,10 @@ class StripeConnect {
     _onAccountOnboardingLoadError = onLoadError;
 
     try {
-      await _channel.invokeMethod('presentAccountOnboarding');
+      await _channel.invokeMethod('presentAccountOnboarding', {
+        if (collectionOptions != null)
+          'collectionOptions': collectionOptions.toMap(),
+      });
     } on PlatformException catch (e) {
       onLoadError?.call(e.message ?? 'Unknown error');
     }

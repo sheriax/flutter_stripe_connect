@@ -39,7 +39,7 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         case "logout":
             handleLogout(result: result)
         case "presentAccountOnboarding":
-            handlePresentAccountOnboarding(result: result)
+            handlePresentAccountOnboarding(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -104,7 +104,7 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         return topController
     }
     
-    private func handlePresentAccountOnboarding(result: @escaping FlutterResult) {
+    private func handlePresentAccountOnboarding(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let manager = FlutterStripeConnectPlugin.embeddedComponentManager else {
             result(FlutterError(code: "NOT_INITIALIZED", message: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", details: nil))
             return
@@ -115,7 +115,9 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             return
         }
         
-        let controller = manager.createAccountOnboardingController()
+        let controller = manager.createAccountOnboardingController(
+            collectionOptions: AccountOnboardingArguments.collectionOptions(from: call.arguments as? [String: Any])
+        )
         controller.delegate = self
         self.accountOnboardingController = controller
         controller.present(from: topVC)
@@ -129,6 +131,29 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
     
     public func accountOnboardingDidExit(_ accountOnboarding: AccountOnboardingController) {
         FlutterStripeConnectPlugin.channel?.invokeMethod("onAccountOnboardingExit", arguments: nil)
+    }
+}
+
+// MARK: - Account Onboarding Arguments
+/// Decodes the account onboarding options sent from Dart.
+enum AccountOnboardingArguments {
+    static func collectionOptions(from args: [String: Any]?) -> AccountCollectionOptions {
+        var options = AccountCollectionOptions()
+        guard let map = args?["collectionOptions"] as? [String: Any] else {
+            return options
+        }
+        
+        if let fields = map["fields"] as? String,
+           let option = AccountCollectionOptions.FieldOption(rawValue: fields) {
+            options.fields = option
+        }
+        
+        if let futureRequirements = map["futureRequirements"] as? String,
+           let option = AccountCollectionOptions.FutureRequirementOption(rawValue: futureRequirements) {
+            options.futureRequirements = option
+        }
+        
+        return options
     }
 }
 
@@ -218,7 +243,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
             
             switch type {
             case "stripe_account_onboarding":
-                self.setupOnboarding(manager: manager)
+                self.setupOnboarding(manager: manager, args: args)
                 
             case "stripe_account_management":
                 self.setupAccountManagement(manager: manager)
@@ -236,10 +261,12 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         }
     }
     
-    private func setupOnboarding(manager: EmbeddedComponentManager) {
+    private func setupOnboarding(manager: EmbeddedComponentManager, args: [String: Any]) {
         hideLoading()
         
-        let controller = manager.createAccountOnboardingController()
+        let controller = manager.createAccountOnboardingController(
+            collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
+        )
         controller.delegate = self
         self.accountOnboardingController = controller
         

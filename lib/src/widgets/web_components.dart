@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../stripe_connect.dart';
+import '../models/account_collection_options.dart';
 import '../stripe_connect_web.dart';
 import 'connect_components.dart';
 
@@ -36,6 +37,9 @@ class StripeConnectWebView extends StatefulWidget {
   /// Extra parameters for the component
   final Map<String, dynamic>? extraParams;
 
+  /// Which requirements account onboarding collects
+  final AccountCollectionOptions? collectionOptions;
+
   const StripeConnectWebView({
     super.key,
     required this.componentType,
@@ -44,6 +48,7 @@ class StripeConnectWebView extends StatefulWidget {
     this.onExit,
     this.appearance,
     this.extraParams,
+    this.collectionOptions,
   });
 
   @override
@@ -103,7 +108,10 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
         return;
       }
 
-      final component = webInstance.createComponent(widget.componentType);
+      final component = webInstance.createComponent(
+        widget.componentType,
+        collectionOptions: widget.collectionOptions,
+      );
       if (component == null) {
         final errorMsg =
             'Failed to create ${widget.componentType.value} component';
@@ -176,6 +184,7 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
   final void Function(String error)? onLoadError;
   final VoidCallback? onExit;
   final ConnectAppearance? appearance;
+  final AccountCollectionOptions? collectionOptions;
 
   const StripeAccountOnboardingWeb({
     super.key,
@@ -183,6 +192,7 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
     this.onLoadError,
     this.onExit,
     this.appearance,
+    this.collectionOptions,
   });
 
   @override
@@ -193,6 +203,7 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
       onLoadError: onLoadError,
       onExit: onExit,
       appearance: appearance,
+      collectionOptions: collectionOptions,
     );
   }
 }
