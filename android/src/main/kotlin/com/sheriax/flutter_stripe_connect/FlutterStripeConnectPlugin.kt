@@ -24,7 +24,6 @@ import com.stripe.android.connect.AccountOnboardingProps
 import com.stripe.android.connect.PaymentsListener
 import com.stripe.android.connect.PayoutsListener
 import com.stripe.android.connect.StripeComponentController
-import com.stripe.android.connect.PreviewConnectSDK
 import com.stripe.android.connect.appearance.Appearance
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
@@ -243,7 +242,6 @@ class StripeConnectPlatformView(
         setupComponent()
     }
     
-    @OptIn(PreviewConnectSDK::class)
     private fun setupComponent() {
         val manager = FlutterStripeConnectPlugin.embeddedComponentManager
         if (manager == null) {

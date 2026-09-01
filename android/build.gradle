@@ -54,7 +54,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     
     // Stripe Connect SDK
-    implementation 'com.stripe:connect:22.7.0'
+    implementation 'com.stripe:connect:23.17.1'
     
     // Coroutines for async operations
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'

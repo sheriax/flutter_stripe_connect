@@ -13,7 +13,7 @@ providing embedded components for account onboarding, management, and payouts.
   s.source_files     = 'flutter_stripe_connect/Sources/flutter_stripe_connect/**/*.swift'
   
   s.dependency 'Flutter'
-  s.dependency 'StripeConnect', '~> 25.0'
+  s.dependency 'StripeConnect', '~> 26.0'
   
   s.platform         = :ios, '15.0'
   s.swift_version    = '5.0'
