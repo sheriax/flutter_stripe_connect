@@ -23,6 +23,10 @@ class StripeConnectWeb {
     throw UnimplementedError();
   }
 
+  void updateAppearance(ConnectAppearance appearance) {
+    throw UnimplementedError();
+  }
+
   void logout() {
     throw UnimplementedError();
   }

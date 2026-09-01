@@ -84,7 +84,19 @@ class MainActivity : FlutterFragmentActivity()
 
 ### iOS Setup
 
-No additional setup required. The plugin uses StripeConnect iOS SDK via CocoaPods.
+**Important**: add `NSCameraUsageDescription` to your `ios/Runner/Info.plist`.
+Embedded components capture identity documents with the camera, and the
+StripeConnect SDK asserts on this key when the component manager is created —
+without it a debug build stops there.
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app uses your camera to take a photo of your identity documents.</string>
+```
+
+The plugin ships both a podspec and a `Package.swift`, so it works under
+CocoaPods and under Swift Package Manager. Either way the app has to target
+iOS 15.0 or later.
 
 > **Troubleshooting**: If pod install fails on the first try, run:
 > ```bash
@@ -195,6 +207,46 @@ ElevatedButton(
 
 > **Note**: `presentAccountOnboarding()` is only supported on iOS and Android. On Web, use the `StripeAccountOnboarding` widget.
 
+**Collecting more than what is currently due**
+
+Onboarding always collects `currently_due` requirements. Anything Stripe defers
+is left out — for a US individual, the date of birth and the last four digits
+of the social security number are only due as the account approaches its first
+payouts, so an onboarding run early in your flow never asks for them. Pass
+`collectionOptions` to pull them forward:
+
+```dart
+await StripeConnect.presentAccountOnboarding(
+  collectionOptions: const AccountCollectionOptions(
+    fields: AccountFieldOption.eventuallyDue,
+    futureRequirements: AccountFutureRequirementOption.include,
+  ),
+);
+```
+
+Collecting more than what is currently due is subject to Stripe's
+[policy instructions](https://docs.stripe.com/connect/supported-embedded-components/account-onboarding#requirement-collection-options).
+
+**Your own agreements, and your own title**
+
+For connected accounts where your platform is responsible for collecting
+requirements, you can put your own agreements in place of Stripe's links and
+take terms acceptance through your own flow:
+
+```dart
+await StripeConnect.presentAccountOnboarding(
+  title: context.l10n.onboardingTitle,
+  fullTermsOfServiceUrl: 'https://example.com/terms',
+  recipientTermsOfServiceUrl: 'https://example.com/recipient-terms',
+  privacyPolicyUrl: 'https://example.com/privacy',
+  skipTermsOfServiceCollection: true,
+);
+```
+
+Both sets of options are also available on the `StripeAccountOnboarding`
+widget. `title` applies to native platforms only — on web the component has no
+title bar of its own.
+
 #### Account Management
 
 ```dart
@@ -251,9 +303,14 @@ StripeDisputesList(
 
 ### 3. Customize Appearance (Optional)
 
+Appearance belongs to the Stripe instance rather than to an individual
+component, so it is set once at initialization and applies everywhere:
+
 ```dart
-StripeAccountOnboarding(
-  appearance: ConnectAppearance(
+await StripeConnect.instance.initialize(
+  publishableKey: 'pk_test_...',
+  clientSecretProvider: fetchClientSecret,
+  appearance: const ConnectAppearance(
     fontFamily: 'Roboto',
     cornerRadius: 12.0,
     colors: ConnectColors(
@@ -262,8 +319,25 @@ StripeAccountOnboarding(
       text: '#1A1A1A',
     ),
   ),
-)
+);
 ```
+
+Restyle later — following the app's theme, for instance — with
+`updateAppearance`, which also reaches the components already on screen:
+
+```dart
+await StripeConnect.instance.updateAppearance(
+  const ConnectAppearance(colors: ConnectColors(background: '#111111')),
+);
+```
+
+Colors are hex strings. On native platforms `#RGB` and `#RRGGBB` are accepted;
+alpha is not, because CSS reads `#RRGGBBAA` while Android reads `#AARRGGBB`. A
+`fontFamily` only renders if it resolves to a font the app already has — a
+system font, or one it bundles and registers.
+
+> **Note**: the `appearance` argument on the individual component widgets is
+> not applied. Set it through `initialize` or `updateAppearance` instead.
 
 ## Server-Side Setup
 

@@ -36,10 +36,12 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         switch call.method {
         case "initialize":
             handleInitialize(call, result: result)
+        case "updateAppearance":
+            handleUpdateAppearance(call, result: result)
         case "logout":
             handleLogout(result: result)
         case "presentAccountOnboarding":
-            handlePresentAccountOnboarding(result: result)
+            handlePresentAccountOnboarding(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -57,11 +59,23 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         
         // Create the embedded component manager - ALWAYS fetch fresh secrets (no caching!)
         FlutterStripeConnectPlugin.embeddedComponentManager = EmbeddedComponentManager(
+            appearance: AppearanceArguments.appearance(from: args["appearance"] as? [String: Any]),
             fetchClientSecret: { [weak self] in
                 return await self?.fetchClientSecretFromFlutter()
             }
         )
         
+        result(nil)
+    }
+    
+    private func handleUpdateAppearance(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let manager = FlutterStripeConnectPlugin.embeddedComponentManager else {
+            result(FlutterError(code: "NOT_INITIALIZED", message: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", details: nil))
+            return
+        }
+        
+        let args = call.arguments as? [String: Any]
+        manager.update(appearance: AppearanceArguments.appearance(from: args?["appearance"] as? [String: Any]))
         result(nil)
     }
     
@@ -104,7 +118,7 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         return topController
     }
     
-    private func handlePresentAccountOnboarding(result: @escaping FlutterResult) {
+    private func handlePresentAccountOnboarding(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let manager = FlutterStripeConnectPlugin.embeddedComponentManager else {
             result(FlutterError(code: "NOT_INITIALIZED", message: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", details: nil))
             return
@@ -115,7 +129,15 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             return
         }
         
-        let controller = manager.createAccountOnboardingController()
+        let args = call.arguments as? [String: Any]
+        let controller = manager.createAccountOnboardingController(
+            fullTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "fullTermsOfServiceUrl"),
+            recipientTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "recipientTermsOfServiceUrl"),
+            privacyPolicyUrl: AccountOnboardingArguments.url(from: args, key: "privacyPolicyUrl"),
+            skipTermsOfServiceCollection: args?["skipTermsOfServiceCollection"] as? Bool,
+            collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
+        )
+        controller.title = args?["title"] as? String
         controller.delegate = self
         self.accountOnboardingController = controller
         controller.present(from: topVC)
@@ -129,6 +151,89 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
     
     public func accountOnboardingDidExit(_ accountOnboarding: AccountOnboardingController) {
         FlutterStripeConnectPlugin.channel?.invokeMethod("onAccountOnboardingExit", arguments: nil)
+    }
+}
+
+// MARK: - Account Onboarding Arguments
+/// Decodes the account onboarding options sent from Dart.
+enum AccountOnboardingArguments {
+    static func collectionOptions(from args: [String: Any]?) -> AccountCollectionOptions {
+        var options = AccountCollectionOptions()
+        guard let map = args?["collectionOptions"] as? [String: Any] else {
+            return options
+        }
+        
+        if let fields = map["fields"] as? String,
+           let option = AccountCollectionOptions.FieldOption(rawValue: fields) {
+            options.fields = option
+        }
+        
+        if let futureRequirements = map["futureRequirements"] as? String,
+           let option = AccountCollectionOptions.FutureRequirementOption(rawValue: futureRequirements) {
+            options.futureRequirements = option
+        }
+        
+        return options
+    }
+    
+    static func url(from args: [String: Any]?, key: String) -> URL? {
+        guard let value = args?[key] as? String else { return nil }
+        return URL(string: value)
+    }
+}
+
+// MARK: - Appearance Arguments
+/// Decodes the appearance sent from Dart.
+enum AppearanceArguments {
+    static func appearance(from map: [String: Any]?) -> EmbeddedComponentManager.Appearance {
+        var appearance = EmbeddedComponentManager.Appearance()
+        guard let map else { return appearance }
+        
+        if let colors = map["colors"] as? [String: Any] {
+            appearance.colors.primary = color(colors["primary"])
+            appearance.colors.background = color(colors["background"])
+            appearance.colors.text = color(colors["text"])
+            appearance.colors.secondaryText = color(colors["secondaryText"])
+            appearance.colors.border = color(colors["border"])
+            appearance.colors.actionPrimaryText = color(colors["actionPrimaryText"])
+            appearance.colors.actionSecondaryText = color(colors["actionSecondaryText"])
+            appearance.colors.formBackground = color(colors["formBackground"])
+            appearance.colors.formHighlightBorder = color(colors["formHighlightBorder"])
+        }
+        
+        if let cornerRadius = map["cornerRadius"] as? NSNumber {
+            appearance.cornerRadius.base = CGFloat(cornerRadius.doubleValue)
+        }
+        
+        // A family name only renders if it resolves to a font the app already
+        // has — a system font, or one bundled and registered by the app.
+        if let fontFamily = map["fontFamily"] as? String {
+            let size = appearance.typography.fontSizeBase ?? 16
+            appearance.typography.font = UIFont(name: fontFamily, size: size)
+        }
+        
+        return appearance
+    }
+    
+    /// Parses `#RGB` and `#RRGGBB`, the notations the web implementation and
+    /// the Android side both accept. Anything else is left unset.
+    static func color(_ value: Any?) -> UIColor? {
+        guard var hex = value as? String else { return nil }
+        hex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard hex.hasPrefix("#") else { return nil }
+        hex.removeFirst()
+        
+        if hex.count == 3 {
+            hex = hex.map { "\($0)\($0)" }.joined()
+        }
+        guard hex.count == 6, let value = UInt32(hex, radix: 16) else { return nil }
+        
+        return UIColor(
+            red: CGFloat((value & 0xFF0000) >> 16) / 255,
+            green: CGFloat((value & 0x00FF00) >> 8) / 255,
+            blue: CGFloat(value & 0x0000FF) / 255,
+            alpha: 1
+        )
     }
 }
 
@@ -218,7 +323,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
             
             switch type {
             case "stripe_account_onboarding":
-                self.setupOnboarding(manager: manager)
+                self.setupOnboarding(manager: manager, args: args)
                 
             case "stripe_account_management":
                 self.setupAccountManagement(manager: manager)
@@ -236,10 +341,17 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         }
     }
     
-    private func setupOnboarding(manager: EmbeddedComponentManager) {
+    private func setupOnboarding(manager: EmbeddedComponentManager, args: [String: Any]) {
         hideLoading()
         
-        let controller = manager.createAccountOnboardingController()
+        let controller = manager.createAccountOnboardingController(
+            fullTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "fullTermsOfServiceUrl"),
+            recipientTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "recipientTermsOfServiceUrl"),
+            privacyPolicyUrl: AccountOnboardingArguments.url(from: args, key: "privacyPolicyUrl"),
+            skipTermsOfServiceCollection: args["skipTermsOfServiceCollection"] as? Bool,
+            collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
+        )
+        controller.title = args["title"] as? String
         controller.delegate = self
         self.accountOnboardingController = controller
         

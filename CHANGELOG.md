@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased
+
+* **Requirement Collection Options** - `AccountCollectionOptions` on
+  `StripeConnect.presentAccountOnboarding` and on the `StripeAccountOnboarding`
+  widget, so onboarding can collect `eventually_due` and future requirements
+  instead of only what is currently due. Supported on iOS, Android and Web
+* **Terms of Service and Privacy Policy URLs** - `fullTermsOfServiceUrl`,
+  `recipientTermsOfServiceUrl`, `privacyPolicyUrl` and
+  `skipTermsOfServiceCollection` are now passed through to the component
+* **Onboarding Title** - `title` replaces the hardcoded English
+  "Account Onboarding" on Android and the missing title on iOS
+* **Appearance Applied on Native** - `ConnectAppearance` passed to `initialize`
+  now reaches the iOS and Android component managers, which previously dropped
+  it; `StripeConnect.updateAppearance` restyles components already on screen
+* **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
+* **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
+  - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK
+* **Fixed Swift Package Manager Dependency** - `Package.swift` resolved a
+  different StripeConnect major than the podspec asked for
+* **Fixed iOS Example** - the Runner target was left at iOS 13.0 while the
+  plugin requires 15.0, so the example could not be built for iOS
+
 ## 0.3.7
 
 * **Fixed Scroll Issue on Flutter Web & WebView** ([#3](https://github.com/sheriax/flutter_stripe_connect/issues/3))

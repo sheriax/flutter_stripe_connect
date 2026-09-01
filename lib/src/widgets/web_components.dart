@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../stripe_connect.dart';
+import '../models/account_collection_options.dart';
 import '../stripe_connect_web.dart';
 import 'connect_components.dart';
 
@@ -36,6 +37,21 @@ class StripeConnectWebView extends StatefulWidget {
   /// Extra parameters for the component
   final Map<String, dynamic>? extraParams;
 
+  /// Which requirements account onboarding collects
+  final AccountCollectionOptions? collectionOptions;
+
+  /// URL to your full terms of service agreement
+  final String? fullTermsOfServiceUrl;
+
+  /// URL to your recipient terms of service agreement
+  final String? recipientTermsOfServiceUrl;
+
+  /// Absolute URL to your privacy policy
+  final String? privacyPolicyUrl;
+
+  /// Whether onboarding skips terms of service collection
+  final bool? skipTermsOfServiceCollection;
+
   const StripeConnectWebView({
     super.key,
     required this.componentType,
@@ -44,6 +60,11 @@ class StripeConnectWebView extends StatefulWidget {
     this.onExit,
     this.appearance,
     this.extraParams,
+    this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
   });
 
   @override
@@ -103,7 +124,14 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
         return;
       }
 
-      final component = webInstance.createComponent(widget.componentType);
+      final component = webInstance.createComponent(
+        widget.componentType,
+        collectionOptions: widget.collectionOptions,
+        fullTermsOfServiceUrl: widget.fullTermsOfServiceUrl,
+        recipientTermsOfServiceUrl: widget.recipientTermsOfServiceUrl,
+        privacyPolicyUrl: widget.privacyPolicyUrl,
+        skipTermsOfServiceCollection: widget.skipTermsOfServiceCollection,
+      );
       if (component == null) {
         final errorMsg =
             'Failed to create ${widget.componentType.value} component';
@@ -176,6 +204,11 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
   final void Function(String error)? onLoadError;
   final VoidCallback? onExit;
   final ConnectAppearance? appearance;
+  final AccountCollectionOptions? collectionOptions;
+  final String? fullTermsOfServiceUrl;
+  final String? recipientTermsOfServiceUrl;
+  final String? privacyPolicyUrl;
+  final bool? skipTermsOfServiceCollection;
 
   const StripeAccountOnboardingWeb({
     super.key,
@@ -183,6 +216,11 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
     this.onLoadError,
     this.onExit,
     this.appearance,
+    this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
   });
 
   @override
@@ -193,6 +231,11 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
       onLoadError: onLoadError,
       onExit: onExit,
       appearance: appearance,
+      collectionOptions: collectionOptions,
+      fullTermsOfServiceUrl: fullTermsOfServiceUrl,
+      recipientTermsOfServiceUrl: recipientTermsOfServiceUrl,
+      privacyPolicyUrl: privacyPolicyUrl,
+      skipTermsOfServiceCollection: skipTermsOfServiceCollection,
     );
   }
 }

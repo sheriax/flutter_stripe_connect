@@ -24,8 +24,10 @@ import com.stripe.android.connect.AccountOnboardingProps
 import com.stripe.android.connect.PaymentsListener
 import com.stripe.android.connect.PayoutsListener
 import com.stripe.android.connect.StripeComponentController
-import com.stripe.android.connect.PreviewConnectSDK
 import com.stripe.android.connect.appearance.Appearance
+import com.stripe.android.connect.appearance.Colors
+import com.stripe.android.connect.appearance.CornerRadius
+import com.stripe.android.connect.appearance.Typography
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -128,8 +130,9 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "initialize" -> handleInitialize(call, result)
+            "updateAppearance" -> handleUpdateAppearance(call, result)
             "logout" -> handleLogout(result)
-            "presentAccountOnboarding" -> handlePresentAccountOnboarding(result)
+            "presentAccountOnboarding" -> handlePresentAccountOnboarding(call, result)
             else -> result.notImplemented()
         }
     }
@@ -142,14 +145,40 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         }
 
         try {
-            embeddedComponentManager = EmbeddedComponentManager(
-                publishableKey = publishableKey,
-                fetchClientSecret = ::fetchClientSecretSuspend,
-            )
+            val appearance = connectAppearance(call.argument<Map<*, *>>("appearance"))
+            embeddedComponentManager = if (appearance != null) {
+                EmbeddedComponentManager(
+                    publishableKey = publishableKey,
+                    fetchClientSecret = ::fetchClientSecretSuspend,
+                    appearance = appearance,
+                )
+            } else {
+                EmbeddedComponentManager(
+                    publishableKey = publishableKey,
+                    fetchClientSecret = ::fetchClientSecretSuspend,
+                )
+            }
             result.success(null)
         } catch (e: Exception) {
             result.error("INIT_ERROR", e.message, null)
         }
+    }
+
+    private fun handleUpdateAppearance(call: MethodCall, result: MethodChannel.Result) {
+        val manager = embeddedComponentManager
+        if (manager == null) {
+            result.error(
+                "NOT_INITIALIZED",
+                "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.",
+                null
+            )
+            return
+        }
+
+        val appearance = connectAppearance(call.argument<Map<*, *>>("appearance"))
+            ?: Appearance.Builder().build()
+        manager.update(appearance)
+        result.success(null)
     }
 
     private fun handleLogout(result: MethodChannel.Result) {
@@ -158,7 +187,7 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         result.success(null)
     }
     
-    private fun handlePresentAccountOnboarding(result: MethodChannel.Result) {
+    private fun handlePresentAccountOnboarding(call: MethodCall, result: MethodChannel.Result) {
         val manager = embeddedComponentManager
         val currentAct = activity
         
@@ -173,10 +202,11 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         }
         
         try {
+            val args = call.arguments as? Map<*, *>
             accountOnboardingController = manager.createAccountOnboardingController(
                 activity = currentAct,
-                title = "Account Onboarding",
-                props = AccountOnboardingProps()
+                title = args?.get("title") as? String,
+                props = accountOnboardingProps(args)
             ).apply {
                 onDismissListener = StripeComponentController.OnDismissListener {
                     channel.invokeMethod("onAccountOnboardingExit", null)
@@ -243,7 +273,6 @@ class StripeConnectPlatformView(
         setupComponent()
     }
     
-    @OptIn(PreviewConnectSDK::class)
     private fun setupComponent() {
         val manager = FlutterStripeConnectPlugin.embeddedComponentManager
         if (manager == null) {
@@ -260,8 +289,8 @@ class StripeConnectPlatformView(
                     if (activity != null) {
                         val controller = manager.createAccountOnboardingController(
                             activity = activity,
-                            title = "Account Onboarding",
-                            props = AccountOnboardingProps()
+                            title = params["title"] as? String,
+                            props = accountOnboardingProps(params)
                         ).apply {
                             onDismissListener = StripeComponentController.OnDismissListener {
                                 channel.invokeMethod("onExit", null)
@@ -337,4 +366,97 @@ class StripeConnectPlatformView(
     override fun dispose() {
         containerView.removeAllViews()
     }
+}
+
+/**
+ * Decodes the account onboarding props sent from Dart.
+ */
+internal fun accountOnboardingProps(args: Map<*, *>?): AccountOnboardingProps {
+    return AccountOnboardingProps(
+        fullTermsOfServiceUrl = args?.get("fullTermsOfServiceUrl") as? String,
+        recipientTermsOfServiceUrl = args?.get("recipientTermsOfServiceUrl") as? String,
+        privacyPolicyUrl = args?.get("privacyPolicyUrl") as? String,
+        skipTermsOfServiceCollection = args?.get("skipTermsOfServiceCollection") as? Boolean,
+        collectionOptions = accountCollectionOptions(args),
+    )
+}
+
+/**
+ * Decodes the account onboarding collection options sent from Dart.
+ *
+ * `AccountOnboardingProps.CollectionOptions` also takes a `requirements`
+ * restriction, but that constructor parameter is `internal` in the Android SDK
+ * and cannot be set from outside it, so only the two public options are
+ * decoded here.
+ */
+internal fun accountCollectionOptions(args: Map<*, *>?): AccountOnboardingProps.CollectionOptions? {
+    val options = args?.get("collectionOptions") as? Map<*, *> ?: return null
+
+    val fields = when (options["fields"]) {
+        "currently_due" -> AccountOnboardingProps.FieldOption.CURRENTLY_DUE
+        "eventually_due" -> AccountOnboardingProps.FieldOption.EVENTUALLY_DUE
+        else -> null
+    }
+
+    val futureRequirements = when (options["futureRequirements"]) {
+        "omit" -> AccountOnboardingProps.FutureRequirementOption.OMIT
+        "include" -> AccountOnboardingProps.FutureRequirementOption.INCLUDE
+        else -> null
+    }
+
+    return AccountOnboardingProps.CollectionOptions(
+        fields = fields,
+        futureRequirements = futureRequirements,
+    )
+}
+
+/**
+ * Decodes the appearance sent from Dart.
+ */
+internal fun connectAppearance(args: Map<*, *>?): Appearance? {
+    if (args == null) return null
+
+    val builder = Appearance.Builder()
+
+    (args["colors"] as? Map<*, *>)?.let { colors ->
+        builder.colors(
+            Colors.Builder()
+                .primary(parseColor(colors["primary"]))
+                .background(parseColor(colors["background"]))
+                .text(parseColor(colors["text"]))
+                .secondaryText(parseColor(colors["secondaryText"]))
+                .border(parseColor(colors["border"]))
+                .actionPrimaryText(parseColor(colors["actionPrimaryText"]))
+                .actionSecondaryText(parseColor(colors["actionSecondaryText"]))
+                .formBackground(parseColor(colors["formBackground"]))
+                .formHighlightBorder(parseColor(colors["formHighlightBorder"]))
+                .build()
+        )
+    }
+
+    (args["cornerRadius"] as? Number)?.let { cornerRadius ->
+        builder.cornerRadius(CornerRadius.Builder().base(cornerRadius.toFloat()).build())
+    }
+
+    (args["fontFamily"] as? String)?.let { fontFamily ->
+        builder.typography(Typography.Builder().fontFamily(fontFamily).build())
+    }
+
+    return builder.build()
+}
+
+/**
+ * Parses `#RGB` and `#RRGGBB`, the notations the web implementation and the
+ * iOS side both accept. Anything else is left unset.
+ */
+internal fun parseColor(value: Any?): Int? {
+    val hex = (value as? String)?.trim()?.removePrefix("#") ?: return null
+    val expanded = when (hex.length) {
+        3 -> hex.map { "$it$it" }.joinToString("")
+        6 -> hex
+        else -> return null
+    }
+    val rgb = expanded.toLongOrNull(radix = 16) ?: return null
+
+    return (0xFF000000L or rgb).toInt()
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'models/webview_config.dart';
+import 'models/account_collection_options.dart';
 import 'widgets/connect_components.dart'
     show OnExitCallback, OnLoadErrorCallback;
 
@@ -39,7 +40,9 @@ class StripeConnect {
   /// Initialize Stripe Connect with your publishable key
   /// [publishableKey] - Your Stripe publishable key
   /// [clientSecretProvider] - Async function that fetches a client secret from your server
-  /// [appearance] - Optional appearance customization (only used on web)
+  /// [appearance] - Optional appearance customization. Applies to every
+  ///   component created from this instance; change it later with
+  ///   [updateAppearance].
   /// [webViewConfig] - Optional WebView configuration for mobile platforms
   ///   When provided, components will render via WebView instead of native SDK
   Future<void> initialize({
@@ -67,6 +70,23 @@ class StripeConnect {
 
     await _channel.invokeMethod('initialize', {
       'publishableKey': publishableKey,
+      if (appearance != null) 'appearance': appearance.toMap(),
+    });
+  }
+
+  /// Restyle the components created from this instance.
+  ///
+  /// Appearance belongs to the Stripe instance rather than to an individual
+  /// component, so this reaches every component already on screen as well as
+  /// the ones created afterwards.
+  Future<void> updateAppearance(ConnectAppearance appearance) async {
+    if (kIsWeb) {
+      web_impl.StripeConnectWeb.instance.updateAppearance(appearance);
+      return;
+    }
+
+    await _channel.invokeMethod('updateAppearance', {
+      'appearance': appearance.toMap(),
     });
   }
 
@@ -103,17 +123,38 @@ class StripeConnect {
   /// This allows you to trigger onboarding from your own UI (e.g., a button tap)
   /// without embedding the [StripeAccountOnboarding] widget.
   ///
+  /// [title] - Title of the onboarding screen. Pass a localized string;
+  ///   without one the platform SDK's own default is used.
+  /// [collectionOptions] - Which requirements to collect. Currently due
+  ///   requirements are always collected; this asks for more on top of them.
+  /// [fullTermsOfServiceUrl] - URL to your full terms of service agreement,
+  ///   shown in place of Stripe's own link.
+  /// [recipientTermsOfServiceUrl] - URL to your recipient terms of service
+  ///   agreement.
+  /// [privacyPolicyUrl] - Absolute URL to your privacy policy.
+  /// [skipTermsOfServiceCollection] - If true, onboarding skips terms of
+  ///   service collection and you must collect acceptance yourself.
   /// [onExit] - Called when the user closes the onboarding flow
   /// [onLoadError] - Called if there's an error loading the onboarding flow
   ///
   /// Example:
   /// ```dart
   /// await StripeConnect.presentAccountOnboarding(
+  ///   collectionOptions: const AccountCollectionOptions(
+  ///     fields: AccountFieldOption.eventuallyDue,
+  ///     futureRequirements: AccountFutureRequirementOption.include,
+  ///   ),
   ///   onExit: () => print('User exited onboarding'),
   ///   onLoadError: (error) => print('Error: $error'),
   /// );
   /// ```
   static Future<void> presentAccountOnboarding({
+    String? title,
+    AccountCollectionOptions? collectionOptions,
+    String? fullTermsOfServiceUrl,
+    String? recipientTermsOfServiceUrl,
+    String? privacyPolicyUrl,
+    bool? skipTermsOfServiceCollection,
     OnExitCallback? onExit,
     OnLoadErrorCallback? onLoadError,
   }) async {
@@ -128,7 +169,18 @@ class StripeConnect {
     _onAccountOnboardingLoadError = onLoadError;
 
     try {
-      await _channel.invokeMethod('presentAccountOnboarding');
+      await _channel.invokeMethod('presentAccountOnboarding', {
+        if (title != null) 'title': title,
+        if (collectionOptions != null)
+          'collectionOptions': collectionOptions.toMap(),
+        if (fullTermsOfServiceUrl != null)
+          'fullTermsOfServiceUrl': fullTermsOfServiceUrl,
+        if (recipientTermsOfServiceUrl != null)
+          'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
+        if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
+        if (skipTermsOfServiceCollection != null)
+          'skipTermsOfServiceCollection': skipTermsOfServiceCollection,
+      });
     } on PlatformException catch (e) {
       onLoadError?.call(e.message ?? 'Unknown error');
     }
