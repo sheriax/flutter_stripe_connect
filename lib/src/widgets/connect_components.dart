@@ -54,6 +54,12 @@ class StripeAccountOnboarding extends StatelessWidget {
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
+  /// Title of the onboarding screen.
+  ///
+  /// Pass a localized string; without one the platform SDK's own default is
+  /// used. Native platforms only — on web the component has no title bar.
+  final String? title;
+
   /// Which requirements onboarding collects.
   ///
   /// Currently due requirements are always collected; this asks for more on
@@ -87,6 +93,7 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.onExit,
     this.appearance,
     this.gestureRecognizers,
+    this.title,
     this.collectionOptions,
     this.fullTermsOfServiceUrl,
     this.recipientTermsOfServiceUrl,
@@ -140,6 +147,7 @@ class StripeAccountOnboarding extends StatelessWidget {
       appearance: appearance,
       gestureRecognizers: gestureRecognizers,
       extraParams: {
+        if (title != null) 'title': title,
         if (collectionOptions != null)
           'collectionOptions': collectionOptions!.toMap(),
         if (fullTermsOfServiceUrl != null)

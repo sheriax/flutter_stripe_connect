@@ -172,10 +172,11 @@ class FlutterStripeConnectPlugin : FlutterPlugin, MethodChannel.MethodCallHandle
         }
         
         try {
+            val args = call.arguments as? Map<*, *>
             accountOnboardingController = manager.createAccountOnboardingController(
                 activity = currentAct,
-                title = "Account Onboarding",
-                props = accountOnboardingProps(call.arguments as? Map<*, *>)
+                title = args?.get("title") as? String,
+                props = accountOnboardingProps(args)
             ).apply {
                 onDismissListener = StripeComponentController.OnDismissListener {
                     channel.invokeMethod("onAccountOnboardingExit", null)
@@ -258,7 +259,7 @@ class StripeConnectPlatformView(
                     if (activity != null) {
                         val controller = manager.createAccountOnboardingController(
                             activity = activity,
-                            title = "Account Onboarding",
+                            title = params["title"] as? String,
                             props = accountOnboardingProps(params)
                         ).apply {
                             onDismissListener = StripeComponentController.OnDismissListener {

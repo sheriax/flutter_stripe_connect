@@ -104,6 +104,8 @@ class StripeConnect {
   /// This allows you to trigger onboarding from your own UI (e.g., a button tap)
   /// without embedding the [StripeAccountOnboarding] widget.
   ///
+  /// [title] - Title of the onboarding screen. Pass a localized string;
+  ///   without one the platform SDK's own default is used.
   /// [collectionOptions] - Which requirements to collect. Currently due
   ///   requirements are always collected; this asks for more on top of them.
   /// [fullTermsOfServiceUrl] - URL to your full terms of service agreement,
@@ -128,6 +130,7 @@ class StripeConnect {
   /// );
   /// ```
   static Future<void> presentAccountOnboarding({
+    String? title,
     AccountCollectionOptions? collectionOptions,
     String? fullTermsOfServiceUrl,
     String? recipientTermsOfServiceUrl,
@@ -148,6 +151,7 @@ class StripeConnect {
 
     try {
       await _channel.invokeMethod('presentAccountOnboarding', {
+        if (title != null) 'title': title,
         if (collectionOptions != null)
           'collectionOptions': collectionOptions.toMap(),
         if (fullTermsOfServiceUrl != null)

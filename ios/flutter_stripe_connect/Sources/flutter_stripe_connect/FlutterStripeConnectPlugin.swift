@@ -123,6 +123,7 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             skipTermsOfServiceCollection: args?["skipTermsOfServiceCollection"] as? Bool,
             collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
         )
+        controller.title = args?["title"] as? String
         controller.delegate = self
         self.accountOnboardingController = controller
         controller.present(from: topVC)
@@ -281,6 +282,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
             skipTermsOfServiceCollection: args["skipTermsOfServiceCollection"] as? Bool,
             collectionOptions: AccountOnboardingArguments.collectionOptions(from: args)
         )
+        controller.title = args["title"] as? String
         controller.delegate = self
         self.accountOnboardingController = controller
         
