@@ -21,6 +21,10 @@
   different StripeConnect major than the podspec asked for
 * **Fixed iOS Example** - the Runner target was left at iOS 13.0 while the
   plugin requires 15.0, so the example could not be built for iOS
+  - `Podfile.lock` still pinned `flutter_stripe_connect 0.2.1` and
+    `StripeConnect 25.2.0`, so `pod install` failed on a fresh checkout
+  - Every pod target is now raised to iOS 15.0; Flutter's own `post_install`
+    helper only raises them to the Flutter minimum
 
 ## 0.3.7
 
