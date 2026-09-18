@@ -471,7 +471,9 @@ internal fun connectAppearance(args: Map<*, *>?): Appearance? {
  * iOS side both accept. Anything else is left unset.
  */
 internal fun parseColor(value: Any?): Int? {
-    val hex = (value as? String)?.trim()?.removePrefix("#") ?: return null
+    val trimmed = (value as? String)?.trim() ?: return null
+    if (!trimmed.startsWith("#")) return null
+    val hex = trimmed.removePrefix("#")
     val expanded = when (hex.length) {
         3 -> hex.map { "$it$it" }.joinToString("")
         6 -> hex
