@@ -226,8 +226,8 @@ class StripeConnectWeb {
       debugPrint('StripeConnectWeb: Creating component: $componentName');
       final component = _connectInstance!.create(componentName);
       _applyCollectionOptions(component, collectionOptions);
-      _applySetter(component, 'setFullTermsOfServiceUrl',
-          fullTermsOfServiceUrl?.toJS);
+      _applySetter(
+          component, 'setFullTermsOfServiceUrl', fullTermsOfServiceUrl?.toJS);
       _applySetter(component, 'setRecipientTermsOfServiceUrl',
           recipientTermsOfServiceUrl?.toJS);
       _applySetter(component, 'setPrivacyPolicyUrl', privacyPolicyUrl?.toJS);
@@ -250,7 +250,8 @@ class StripeConnectWeb {
 
     const setter = 'setCollectionOptions';
     if (!component.has(setter)) {
-      debugPrint('StripeConnectWeb: $setter is not available on this component');
+      debugPrint(
+          'StripeConnectWeb: $setter is not available on this component');
       return;
     }
 
@@ -269,7 +270,8 @@ class StripeConnectWeb {
     if (value == null) return;
 
     if (!component.has(setter)) {
-      debugPrint('StripeConnectWeb: $setter is not available on this component');
+      debugPrint(
+          'StripeConnectWeb: $setter is not available on this component');
       return;
     }
 
