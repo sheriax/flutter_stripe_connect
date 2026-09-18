@@ -34,6 +34,9 @@
 * **Bridge Tests** - the Kotlin and Swift argument decoders are covered by unit
   tests; neither `./gradlew testDebugUnitTest` nor `xcodebuild test` passed
   before, both calling a `getPlatformVersion` handler that no longer exists
+* **Connect.js Names Tested** - the appearance variables and component names
+  moved out of the interop layer into `connectAppearanceVariables` and
+  `connectComponentName`, which `flutter test` covers without a browser
 * **Fixed iOS Example** - the Runner target was left at iOS 13.0 while the
   plugin requires 15.0, so the example could not be built for iOS
   - `Podfile.lock` still pinned `flutter_stripe_connect 0.2.1` and

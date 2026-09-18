@@ -10,6 +10,8 @@ import 'dart:js_interop_unsafe';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_stripe_connect/flutter_stripe_connect.dart';
+
+import 'connect_js_mapping.dart';
 import 'package:web/web.dart' as web;
 
 /// JavaScript interop for StripeConnect global object
@@ -61,44 +63,9 @@ class StripeConnectWeb {
     if (appearance == null) return null;
 
     final variables = JSObject();
-    if (appearance.fontFamily != null) {
-      variables['fontFamily'] = appearance.fontFamily!.toJS;
-    }
-    if (appearance.colors?.primary != null) {
-      variables['colorPrimary'] = appearance.colors!.primary!.toJS;
-    }
-    if (appearance.colors?.background != null) {
-      variables['colorBackground'] = appearance.colors!.background!.toJS;
-    }
-    if (appearance.colors?.text != null) {
-      variables['colorText'] = appearance.colors!.text!.toJS;
-    }
-    if (appearance.colors?.secondaryText != null) {
-      variables['colorSecondaryText'] = appearance.colors!.secondaryText!.toJS;
-    }
-    if (appearance.colors?.border != null) {
-      variables['colorBorder'] = appearance.colors!.border!.toJS;
-    }
-    if (appearance.colors?.actionPrimaryText != null) {
-      variables['actionPrimaryColorText'] =
-          appearance.colors!.actionPrimaryText!.toJS;
-    }
-    if (appearance.colors?.actionSecondaryText != null) {
-      variables['actionSecondaryColorText'] =
-          appearance.colors!.actionSecondaryText!.toJS;
-    }
-    if (appearance.colors?.formBackground != null) {
-      variables['formBackgroundColor'] =
-          appearance.colors!.formBackground!.toJS;
-    }
-    if (appearance.colors?.formHighlightBorder != null) {
-      variables['formHighlightColorBorder'] =
-          appearance.colors!.formHighlightBorder!.toJS;
-    }
-    if (appearance.cornerRadius != null) {
-      // Connect.js only accepts pixel values here; a bare number is ignored.
-      variables['borderRadius'] = '${appearance.cornerRadius}px'.toJS;
-    }
+    connectAppearanceVariables(appearance).forEach((name, value) {
+      variables[name] = value.toJS;
+    });
 
     final appearanceObject = JSObject();
     appearanceObject['overlays'] = 'dialog'.toJS;
@@ -222,7 +189,7 @@ class StripeConnectWeb {
 
     try {
       // Map Flutter component type to Connect.js component name
-      final componentName = _mapComponentName(componentType);
+      final componentName = connectComponentName(componentType);
       debugPrint('StripeConnectWeb: Creating component: $componentName');
       final component = _connectInstance!.create(componentName);
       _applyCollectionOptions(component, collectionOptions);
@@ -276,38 +243,6 @@ class StripeConnectWeb {
     }
 
     component.callMethodVarArgs(setter.toJS, [value]);
-  }
-
-  /// Map Flutter component type to Connect.js component name
-  String _mapComponentName(StripeConnectViewType flutterType) {
-    switch (flutterType) {
-      case StripeConnectViewType.accountOnboarding:
-        return 'account-onboarding';
-      case StripeConnectViewType.accountManagement:
-        return 'account-management';
-      case StripeConnectViewType.payments:
-        return 'payments';
-      case StripeConnectViewType.payouts:
-        return 'payouts';
-      case StripeConnectViewType.notificationBanner:
-        return 'notification-banner';
-      case StripeConnectViewType.balances:
-        return 'balances';
-      case StripeConnectViewType.documents:
-        return 'documents';
-      case StripeConnectViewType.taxSettings:
-        return 'tax-settings';
-      case StripeConnectViewType.taxRegistrations:
-        return 'tax-registrations';
-      case StripeConnectViewType.payoutsList:
-        return 'payouts-list';
-      case StripeConnectViewType.paymentDetails:
-        return 'payment-details';
-      case StripeConnectViewType.payoutDetails:
-        return 'payout-details';
-      case StripeConnectViewType.disputesList:
-        return 'disputes-list';
-    }
   }
 
   /// Restyle every component created from this instance.
