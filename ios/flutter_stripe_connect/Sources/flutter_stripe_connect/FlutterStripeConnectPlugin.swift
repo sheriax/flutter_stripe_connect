@@ -205,8 +205,11 @@ enum AppearanceArguments {
             appearance.cornerRadius.base = CGFloat(cornerRadius.doubleValue)
         }
 
-        // A family name only renders if it resolves to a font the app already
-        // has — a system font, or one bundled and registered by the app.
+        // Only the family reaches the SDK, and the component renders in a web
+        // view with no access to the app's own fonts, so a font the app
+        // bundles will not render. A family UIKit cannot resolve — the generic
+        // CSS families among them — leaves this nil and the SDK falls back to
+        // -apple-system.
         if let fontFamily = map["fontFamily"] as? String {
             let size = appearance.typography.fontSizeBase ?? 16
             appearance.typography.font = UIFont(name: fontFamily, size: size)
