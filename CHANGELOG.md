@@ -16,6 +16,9 @@
   it; `StripeConnect.updateAppearance` restyles components already on screen
   - On Android the action and form colors go through `Action` and `Form`,
     which replace the deprecated setters on `Colors.Builder`
+  - Web now sends `actionPrimaryText`, `actionSecondaryText`, `formBackground`
+    and `formHighlightBorder` on to Connect.js; four of the nine documented
+    colors were being dropped
 * **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
 * **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
   - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK

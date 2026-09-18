@@ -79,6 +79,22 @@ class StripeConnectWeb {
     if (appearance.colors?.border != null) {
       variables['colorBorder'] = appearance.colors!.border!.toJS;
     }
+    if (appearance.colors?.actionPrimaryText != null) {
+      variables['actionPrimaryColorText'] =
+          appearance.colors!.actionPrimaryText!.toJS;
+    }
+    if (appearance.colors?.actionSecondaryText != null) {
+      variables['actionSecondaryColorText'] =
+          appearance.colors!.actionSecondaryText!.toJS;
+    }
+    if (appearance.colors?.formBackground != null) {
+      variables['formBackgroundColor'] =
+          appearance.colors!.formBackground!.toJS;
+    }
+    if (appearance.colors?.formHighlightBorder != null) {
+      variables['formHighlightColorBorder'] =
+          appearance.colors!.formHighlightBorder!.toJS;
+    }
     if (appearance.cornerRadius != null) {
       variables['borderRadius'] = appearance.cornerRadius!.toString().toJS;
     }
