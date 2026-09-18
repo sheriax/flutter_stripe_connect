@@ -24,9 +24,11 @@ import com.stripe.android.connect.AccountOnboardingProps
 import com.stripe.android.connect.PaymentsListener
 import com.stripe.android.connect.PayoutsListener
 import com.stripe.android.connect.StripeComponentController
+import com.stripe.android.connect.appearance.Action
 import com.stripe.android.connect.appearance.Appearance
 import com.stripe.android.connect.appearance.Colors
 import com.stripe.android.connect.appearance.CornerRadius
+import com.stripe.android.connect.appearance.Form
 import com.stripe.android.connect.appearance.Typography
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
@@ -426,12 +428,31 @@ internal fun connectAppearance(args: Map<*, *>?): Appearance? {
                 .text(parseColor(colors["text"]))
                 .secondaryText(parseColor(colors["secondaryText"]))
                 .border(parseColor(colors["border"]))
-                .actionPrimaryText(parseColor(colors["actionPrimaryText"]))
-                .actionSecondaryText(parseColor(colors["actionSecondaryText"]))
-                .formBackground(parseColor(colors["formBackground"]))
-                .formHighlightBorder(parseColor(colors["formHighlightBorder"]))
                 .build()
         )
+
+        // The action and form colors are deprecated on Colors and live on
+        // Appearance itself now, wrapped in Action and Form. Both are only
+        // built when a color asks for them, so an unset color still leaves
+        // the SDK default in place.
+        parseColor(colors["actionPrimaryText"])?.let { color ->
+            builder.actionPrimaryText(Action.Builder().colorText(color).build())
+        }
+
+        parseColor(colors["actionSecondaryText"])?.let { color ->
+            builder.actionSecondaryText(Action.Builder().colorText(color).build())
+        }
+
+        val formBackground = parseColor(colors["formBackground"])
+        val formHighlightBorder = parseColor(colors["formHighlightBorder"])
+        if (formBackground != null || formHighlightBorder != null) {
+            builder.form(
+                Form.Builder()
+                    .colorBackground(formBackground)
+                    .highlightBorder(formHighlightBorder)
+                    .build()
+            )
+        }
     }
 
     (args["cornerRadius"] as? Number)?.let { cornerRadius ->

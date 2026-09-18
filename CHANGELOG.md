@@ -14,6 +14,8 @@
 * **Appearance Applied on Native** - `ConnectAppearance` passed to `initialize`
   now reaches the iOS and Android component managers, which previously dropped
   it; `StripeConnect.updateAppearance` restyles components already on screen
+  - On Android the action and form colors go through `Action` and `Form`,
+    which replace the deprecated setters on `Colors.Builder`
 * **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
 * **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
   - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK
