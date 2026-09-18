@@ -13,17 +13,17 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
     private static var embeddedComponentManager: EmbeddedComponentManager?
     private static weak var registrar: FlutterPluginRegistrar?
     private var accountOnboardingController: AccountOnboardingController?
-    
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         self.registrar = registrar
         channel = FlutterMethodChannel(
             name: "flutter_stripe_connect",
             binaryMessenger: registrar.messenger()
         )
-        
+
         let instance = FlutterStripeConnectPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel!)
-        
+
         // Register the platform view factory
         let factory = StripeConnectViewFactory(
             messenger: registrar.messenger(),
@@ -31,7 +31,7 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         )
         registrar.register(factory, withId: "flutter_stripe_connect_view")
     }
-    
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "initialize":
@@ -46,17 +46,17 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             result(FlutterMethodNotImplemented)
         }
     }
-    
+
     private func handleInitialize(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let args = call.arguments as? [String: Any],
               let publishableKey = args["publishableKey"] as? String else {
             result(FlutterError(code: "INVALID_ARGS", message: "Missing publishableKey", details: nil))
             return
         }
-        
+
         // Configure the Stripe API client with the publishable key
         STPAPIClient.shared.publishableKey = publishableKey
-        
+
         // Create the embedded component manager - ALWAYS fetch fresh secrets (no caching!)
         FlutterStripeConnectPlugin.embeddedComponentManager = EmbeddedComponentManager(
             appearance: AppearanceArguments.appearance(from: args["appearance"] as? [String: Any]),
@@ -64,26 +64,26 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
                 return await self?.fetchClientSecretFromFlutter()
             }
         )
-        
+
         result(nil)
     }
-    
+
     private func handleUpdateAppearance(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let manager = FlutterStripeConnectPlugin.embeddedComponentManager else {
             result(FlutterError(code: "NOT_INITIALIZED", message: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", details: nil))
             return
         }
-        
+
         let args = call.arguments as? [String: Any]
         manager.update(appearance: AppearanceArguments.appearance(from: args?["appearance"] as? [String: Any]))
         result(nil)
     }
-    
+
     private func handleLogout(result: @escaping FlutterResult) {
         FlutterStripeConnectPlugin.embeddedComponentManager = nil
         result(nil)
     }
-    
+
     /// Fetches a fresh client secret from Flutter - NEVER cache these!
     private func fetchClientSecretFromFlutter() async -> String? {
         return await withCheckedContinuation { continuation in
@@ -98,11 +98,11 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             }
         }
     }
-    
+
     static func getEmbeddedComponentManager() -> EmbeddedComponentManager? {
         return embeddedComponentManager
     }
-    
+
     static func getTopViewController() -> UIViewController? {
         guard let window = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
@@ -110,25 +110,25 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
             .first(where: { $0.isKeyWindow }) else {
             return nil
         }
-        
+
         var topController = window.rootViewController
         while let presentedController = topController?.presentedViewController {
             topController = presentedController
         }
         return topController
     }
-    
+
     private func handlePresentAccountOnboarding(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let manager = FlutterStripeConnectPlugin.embeddedComponentManager else {
             result(FlutterError(code: "NOT_INITIALIZED", message: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.", details: nil))
             return
         }
-        
+
         guard let topVC = FlutterStripeConnectPlugin.getTopViewController() else {
             result(FlutterError(code: "NO_VIEW_CONTROLLER", message: "Could not find top view controller", details: nil))
             return
         }
-        
+
         let args = call.arguments as? [String: Any]
         let controller = manager.createAccountOnboardingController(
             fullTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "fullTermsOfServiceUrl"),
@@ -143,12 +143,12 @@ public class FlutterStripeConnectPlugin: NSObject, FlutterPlugin, AccountOnboard
         controller.present(from: topVC)
         result(nil)
     }
-    
+
     // MARK: - AccountOnboardingControllerDelegate (for presentAccountOnboarding)
     public func accountOnboarding(_ accountOnboarding: AccountOnboardingController, didFailLoadWithError error: Error) {
         FlutterStripeConnectPlugin.channel?.invokeMethod("onAccountOnboardingLoadError", arguments: error.localizedDescription)
     }
-    
+
     public func accountOnboardingDidExit(_ accountOnboarding: AccountOnboardingController) {
         FlutterStripeConnectPlugin.channel?.invokeMethod("onAccountOnboardingExit", arguments: nil)
     }
@@ -162,20 +162,20 @@ enum AccountOnboardingArguments {
         guard let map = args?["collectionOptions"] as? [String: Any] else {
             return options
         }
-        
+
         if let fields = map["fields"] as? String,
            let option = AccountCollectionOptions.FieldOption(rawValue: fields) {
             options.fields = option
         }
-        
+
         if let futureRequirements = map["futureRequirements"] as? String,
            let option = AccountCollectionOptions.FutureRequirementOption(rawValue: futureRequirements) {
             options.futureRequirements = option
         }
-        
+
         return options
     }
-    
+
     static func url(from args: [String: Any]?, key: String) -> URL? {
         guard let value = args?[key] as? String else { return nil }
         return URL(string: value)
@@ -188,7 +188,7 @@ enum AppearanceArguments {
     static func appearance(from map: [String: Any]?) -> EmbeddedComponentManager.Appearance {
         var appearance = EmbeddedComponentManager.Appearance()
         guard let map else { return appearance }
-        
+
         if let colors = map["colors"] as? [String: Any] {
             appearance.colors.primary = color(colors["primary"])
             appearance.colors.background = color(colors["background"])
@@ -200,21 +200,21 @@ enum AppearanceArguments {
             appearance.colors.formBackground = color(colors["formBackground"])
             appearance.colors.formHighlightBorder = color(colors["formHighlightBorder"])
         }
-        
+
         if let cornerRadius = map["cornerRadius"] as? NSNumber {
             appearance.cornerRadius.base = CGFloat(cornerRadius.doubleValue)
         }
-        
+
         // A family name only renders if it resolves to a font the app already
         // has — a system font, or one bundled and registered by the app.
         if let fontFamily = map["fontFamily"] as? String {
             let size = appearance.typography.fontSizeBase ?? 16
             appearance.typography.font = UIFont(name: fontFamily, size: size)
         }
-        
+
         return appearance
     }
-    
+
     /// Parses `#RGB` and `#RRGGBB`, the notations the web implementation and
     /// the Android side both accept. Anything else is left unset.
     static func color(_ value: Any?) -> UIColor? {
@@ -222,12 +222,12 @@ enum AppearanceArguments {
         hex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         guard hex.hasPrefix("#") else { return nil }
         hex.removeFirst()
-        
+
         if hex.count == 3 {
             hex = hex.map { "\($0)\($0)" }.joined()
         }
         guard hex.count == 6, let value = UInt32(hex, radix: 16) else { return nil }
-        
+
         return UIColor(
             red: CGFloat((value & 0xFF0000) >> 16) / 255,
             green: CGFloat((value & 0x00FF00) >> 8) / 255,
@@ -241,13 +241,13 @@ enum AppearanceArguments {
 class StripeConnectViewFactory: NSObject, FlutterPlatformViewFactory {
     private let messenger: FlutterBinaryMessenger
     private weak var plugin: FlutterStripeConnectPlugin?
-    
+
     init(messenger: FlutterBinaryMessenger, plugin: FlutterStripeConnectPlugin) {
         self.messenger = messenger
         self.plugin = plugin
         super.init()
     }
-    
+
     func create(
         withFrame frame: CGRect,
         viewIdentifier viewId: Int64,
@@ -260,7 +260,7 @@ class StripeConnectViewFactory: NSObject, FlutterPlatformViewFactory {
             messenger: messenger
         )
     }
-    
+
     func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
         return FlutterStandardMessageCodec.sharedInstance()
     }
@@ -273,29 +273,29 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
     private var componentController: UIViewController?
     private var accountOnboardingController: AccountOnboardingController?
     private var loadingView: UIActivityIndicatorView?
-    
+
     init(frame: CGRect, viewId: Int64, args: [String: Any], messenger: FlutterBinaryMessenger) {
         containerView = UIView(frame: frame)
         containerView.backgroundColor = .systemBackground
-        
+
         let componentType = args["componentType"] as? String ?? ""
         channel = FlutterMethodChannel(
             name: "flutter_stripe_connect/\(componentType)_\(viewId)",
             binaryMessenger: messenger
         )
-        
+
         super.init()
-        
+
         // Show loading indicator while component loads
         showLoading()
-        
+
         setupComponent(type: componentType, args: args)
     }
-    
+
     func view() -> UIView {
         return containerView
     }
-    
+
     private func showLoading() {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.center = CGPoint(x: containerView.bounds.midX, y: containerView.bounds.midY)
@@ -304,46 +304,46 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         containerView.addSubview(indicator)
         loadingView = indicator
     }
-    
+
     private func hideLoading() {
         loadingView?.stopAnimating()
         loadingView?.removeFromSuperview()
         loadingView = nil
     }
-    
+
     private func setupComponent(type: String, args: [String: Any]) {
         guard let manager = FlutterStripeConnectPlugin.getEmbeddedComponentManager() else {
             hideLoading()
             channel.invokeMethod("onLoadError", arguments: "EmbeddedComponentManager not initialized. Call StripeConnect.initialize() first.")
             return
         }
-        
+
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
+
             switch type {
             case "stripe_account_onboarding":
                 self.setupOnboarding(manager: manager, args: args)
-                
+
             case "stripe_account_management":
                 self.setupAccountManagement(manager: manager)
-                
+
             case "stripe_payouts":
                 self.setupPayouts(manager: manager)
-                
+
             case "stripe_payments":
                 self.setupPayments(manager: manager)
-                
+
             default:
                 self.hideLoading()
                 self.channel.invokeMethod("onLoadError", arguments: "Unknown component type: \(type)")
             }
         }
     }
-    
+
     private func setupOnboarding(manager: EmbeddedComponentManager, args: [String: Any]) {
         hideLoading()
-        
+
         let controller = manager.createAccountOnboardingController(
             fullTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "fullTermsOfServiceUrl"),
             recipientTermsOfServiceUrl: AccountOnboardingArguments.url(from: args, key: "recipientTermsOfServiceUrl"),
@@ -354,7 +354,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         controller.title = args["title"] as? String
         controller.delegate = self
         self.accountOnboardingController = controller
-        
+
         // Create a button to present the onboarding flow
         let button = UIButton(type: .system)
         button.setTitle("Start Account Onboarding", for: .normal)
@@ -364,7 +364,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         button.layer.cornerRadius = 12
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(presentOnboarding), for: .touchUpInside)
-        
+
         containerView.addSubview(button)
         NSLayoutConstraint.activate([
             button.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
@@ -372,10 +372,10 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
             button.widthAnchor.constraint(equalToConstant: 250),
             button.heightAnchor.constraint(equalToConstant: 50)
         ])
-        
+
         channel.invokeMethod("onLoaded", arguments: nil)
     }
-    
+
     @objc private func presentOnboarding() {
         guard let controller = accountOnboardingController,
               let topVC = FlutterStripeConnectPlugin.getTopViewController() else {
@@ -383,7 +383,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         }
         controller.present(from: topVC)
     }
-    
+
     private func setupAccountManagement(manager: EmbeddedComponentManager) {
         let controller = manager.createAccountManagementViewController()
         controller.delegate = self
@@ -391,7 +391,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         embedViewController(controller)
         channel.invokeMethod("onLoaded", arguments: nil)
     }
-    
+
     private func setupPayouts(manager: EmbeddedComponentManager) {
         let controller = manager.createPayoutsViewController()
         controller.delegate = self
@@ -399,7 +399,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         embedViewController(controller)
         channel.invokeMethod("onLoaded", arguments: nil)
     }
-    
+
     private func setupPayments(manager: EmbeddedComponentManager) {
         let controller = manager.createPaymentsViewController()
         controller.delegate = self
@@ -407,7 +407,7 @@ class StripeConnectPlatformView: NSObject, FlutterPlatformView {
         embedViewController(controller)
         channel.invokeMethod("onLoaded", arguments: nil)
     }
-    
+
     private func embedViewController(_ controller: UIViewController) {
         hideLoading()
         controller.view.frame = containerView.bounds
@@ -421,7 +421,7 @@ extension StripeConnectPlatformView: AccountOnboardingControllerDelegate {
     func accountOnboarding(_ accountOnboarding: AccountOnboardingController, didFailLoadWithError error: Error) {
         channel.invokeMethod("onLoadError", arguments: error.localizedDescription)
     }
-    
+
     func accountOnboardingDidExit(_ accountOnboarding: AccountOnboardingController) {
         channel.invokeMethod("onExit", arguments: nil)
     }
