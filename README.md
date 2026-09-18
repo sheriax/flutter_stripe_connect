@@ -333,9 +333,25 @@ await StripeConnect.instance.updateAppearance(
 
 Colors are hex strings. On native platforms `#RGB` and `#RRGGBB` are accepted;
 alpha is not, because CSS reads `#RRGGBBAA` while Android reads `#AARRGGBB`.
-`cornerRadius` is a base radius in pixels. A `fontFamily` only renders if it
-resolves to a font the app already has — a system font, or one it bundles and
-registers.
+`cornerRadius` is a base radius in pixels.
+
+#### Fonts
+
+`fontFamily` reaches only as far as naming a family. Every embedded component
+renders in a web context — a `WKWebView` on iOS, a `WebView` on Android, an
+iframe on web — and that context does not inherit the fonts of the app around
+it. Each SDK therefore takes the font file through a channel of its own:
+`EmbeddedComponentManager(fonts:)` on iOS, `customFonts` on Android, the
+`fonts` option of `loadConnectAndInitialize` on web. The plugin does not
+expose any of the three, so **a font your app bundles will not render**. Stay
+with a system family, and check it on each platform you ship: iOS, Android and
+a desktop browser do not carry the same ones. The `Roboto` above is an Android
+system font.
+
+iOS differs in one respect: the family is resolved through `UIFont(name:)`
+before it is handed to the SDK, so the generic CSS families (`sans-serif`,
+`serif`, `monospace`) that Android and web accept are rejected there and fall
+back to `-apple-system`. Name a concrete font rather than a generic family.
 
 > **Note**: the `appearance` argument on the individual component widgets is
 > not applied. Set it through `initialize` or `updateAppearance` instead.

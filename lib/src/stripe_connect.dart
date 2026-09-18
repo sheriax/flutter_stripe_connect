@@ -189,8 +189,21 @@ class StripeConnect {
 
 /// Appearance configuration for Stripe Connect components
 class ConnectAppearance {
+  /// Font family for the embedded components.
+  ///
+  /// Limited to families the components can already resolve, which means the
+  /// system fonts of the platform. Embedded components render in a web
+  /// context that does not inherit the app's fonts, and the plugin does not
+  /// pass font files to the SDKs, so a font the app bundles will not render.
+  ///
+  /// iOS resolves this through `UIFont(name:)` before handing the family to
+  /// the SDK, so the generic CSS families — `sans-serif`, `serif`,
+  /// `monospace` — are rejected there and fall back to `-apple-system`.
   final String? fontFamily;
+
   final ConnectColors? colors;
+
+  /// Base corner radius, in pixels.
   final double? cornerRadius;
 
   const ConnectAppearance({this.fontFamily, this.colors, this.cornerRadius});

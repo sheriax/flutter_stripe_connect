@@ -21,6 +21,9 @@
     colors were being dropped
   - `cornerRadius` reaches Connect.js as a pixel value, so it applies on web
     at all
+  - `fontFamily` is documented for what it does: components render in a web
+    context that has no access to the app's own fonts, and the plugin does
+    not pass font files to the SDKs, so only system families render
 * **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
 * **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
   - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK
