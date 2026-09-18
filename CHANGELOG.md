@@ -31,6 +31,8 @@
     to 22.4.0 and the plugin already brings the SDK in
 * **Fixed Swift Package Manager Dependency** - `Package.swift` resolved a
   different StripeConnect major than the podspec asked for
+* **Android Bridge Tests** - the Kotlin argument decoders are covered by unit
+  tests; `./gradlew testDebugUnitTest` previously did not compile at all
 * **Fixed iOS Example** - the Runner target was left at iOS 13.0 while the
   plugin requires 15.0, so the example could not be built for iOS
   - `Podfile.lock` still pinned `flutter_stripe_connect 0.2.1` and
