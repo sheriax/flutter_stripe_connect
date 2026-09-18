@@ -19,6 +19,8 @@
   - Web now sends `actionPrimaryText`, `actionSecondaryText`, `formBackground`
     and `formHighlightBorder` on to Connect.js; four of the nine documented
     colors were being dropped
+  - `cornerRadius` reaches Connect.js as a pixel value, so it applies on web
+    at all
 * **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
 * **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
   - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK

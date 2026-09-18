@@ -96,7 +96,8 @@ class StripeConnectWeb {
           appearance.colors!.formHighlightBorder!.toJS;
     }
     if (appearance.cornerRadius != null) {
-      variables['borderRadius'] = appearance.cornerRadius!.toString().toJS;
+      // Connect.js only accepts pixel values here; a bare number is ignored.
+      variables['borderRadius'] = '${appearance.cornerRadius}px'.toJS;
     }
 
     final appearanceObject = JSObject();

@@ -332,9 +332,10 @@ await StripeConnect.instance.updateAppearance(
 ```
 
 Colors are hex strings. On native platforms `#RGB` and `#RRGGBB` are accepted;
-alpha is not, because CSS reads `#RRGGBBAA` while Android reads `#AARRGGBB`. A
-`fontFamily` only renders if it resolves to a font the app already has — a
-system font, or one it bundles and registers.
+alpha is not, because CSS reads `#RRGGBBAA` while Android reads `#AARRGGBB`.
+`cornerRadius` is a base radius in pixels. A `fontFamily` only renders if it
+resolves to a font the app already has — a system font, or one it bundles and
+registers.
 
 > **Note**: the `appearance` argument on the individual component widgets is
 > not applied. Set it through `initialize` or `updateAppearance` instead.
