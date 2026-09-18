@@ -17,6 +17,8 @@
 * **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
 * **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
   - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK
+  - The example no longer declares `com.stripe:connect` itself; it was pinned
+    to 22.4.0 and the plugin already brings the SDK in
 * **Fixed Swift Package Manager Dependency** - `Package.swift` resolved a
   different StripeConnect major than the podspec asked for
 * **Fixed iOS Example** - the Runner target was left at iOS 13.0 while the
