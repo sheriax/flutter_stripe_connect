@@ -432,27 +432,23 @@ internal fun connectAppearance(args: Map<*, *>?): Appearance? {
         )
 
         // The action and form colors are deprecated on Colors and live on
-        // Appearance itself now, wrapped in Action and Form. Both are only
-        // built when a color asks for them, so an unset color still leaves
-        // the SDK default in place.
-        parseColor(colors["actionPrimaryText"])?.let { color ->
-            builder.actionPrimaryText(Action.Builder().colorText(color).build())
-        }
+        // Appearance itself now, wrapped in Action and Form. An unset color
+        // leaves a null behind, which is exactly what the objects the SDK
+        // defaults to already hold.
+        builder.actionPrimaryText(
+            Action.Builder().colorText(parseColor(colors["actionPrimaryText"])).build()
+        )
 
-        parseColor(colors["actionSecondaryText"])?.let { color ->
-            builder.actionSecondaryText(Action.Builder().colorText(color).build())
-        }
+        builder.actionSecondaryText(
+            Action.Builder().colorText(parseColor(colors["actionSecondaryText"])).build()
+        )
 
-        val formBackground = parseColor(colors["formBackground"])
-        val formHighlightBorder = parseColor(colors["formHighlightBorder"])
-        if (formBackground != null || formHighlightBorder != null) {
-            builder.form(
-                Form.Builder()
-                    .colorBackground(formBackground)
-                    .highlightBorder(formHighlightBorder)
-                    .build()
-            )
-        }
+        builder.form(
+            Form.Builder()
+                .colorBackground(parseColor(colors["formBackground"]))
+                .highlightBorder(parseColor(colors["formHighlightBorder"]))
+                .build()
+        )
     }
 
     (args["cornerRadius"] as? Number)?.let { cornerRadius ->
