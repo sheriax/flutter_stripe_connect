@@ -1,20 +1,20 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_stripe_connect (0.2.1):
+  - flutter_stripe_connect (0.3.7):
     - Flutter
-    - StripeConnect (~> 25.0)
+    - StripeConnect (~> 26.0)
   - integration_test (0.0.1):
     - Flutter
-  - StripeConnect (25.2.0):
-    - StripeCore (= 25.2.0)
-    - StripeFinancialConnections (= 25.2.0)
-    - StripeUICore (= 25.2.0)
-  - StripeCore (25.2.0)
-  - StripeFinancialConnections (25.2.0):
-    - StripeCore (= 25.2.0)
-    - StripeUICore (= 25.2.0)
-  - StripeUICore (25.2.0):
-    - StripeCore (= 25.2.0)
+  - StripeConnect (26.11.0):
+    - StripeCore (= 26.11.0)
+    - StripeFinancialConnections (= 26.11.0)
+    - StripeUICore (= 26.11.0)
+  - StripeCore (26.11.0)
+  - StripeFinancialConnections (26.11.0):
+    - StripeCore (= 26.11.0)
+    - StripeUICore (= 26.11.0)
+  - StripeUICore (26.11.0):
+    - StripeCore (= 26.11.0)
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -44,14 +44,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_stripe_connect: 5126e9b9812830a011fd67e264f72ebca114c734
+  flutter_stripe_connect: 9eab577e4b1fdffe78b4f74d5d3433e0fcf65bb7
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  StripeConnect: 9304e8252a5579316fe15cb1347a9e45cf90b9d8
-  StripeCore: 435584a514851a3037bd4d818837c8c1e56da16d
-  StripeFinancialConnections: 3c21d9acc6fa1d9aa752d4b34228caaea15b3902
-  StripeUICore: 7b4d90167014a0f3e1131b7ffaf24858b1b8ea96
+  StripeConnect: f8e1e9eca6cb33946e27ef3dd3ddf2c5e6ba1017
+  StripeCore: 21d74e81c1bb74b711a8d06988ca675d21fdbcf8
+  StripeFinancialConnections: f66aa973cac09ac96a16f8655c1d2b83ec804e87
+  StripeUICore: 9e2582b98669b7e6e2d39bcada4667dc79e8223e
   webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
-PODFILE CHECKSUM: 53a6aebc29ccee84c41f92f409fc20cd4ca011f1
+PODFILE CHECKSUM: f5fb2ebc16ad9f9d2bd930cc84e1b6e1dde39daf
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0

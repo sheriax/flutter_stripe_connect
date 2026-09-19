@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../stripe_connect.dart';
+import '../models/account_collection_options.dart';
 import 'webview_components.dart';
 
 // Conditional import for web support
@@ -53,6 +54,33 @@ class StripeAccountOnboarding extends StatelessWidget {
   final ConnectAppearance? appearance;
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
+  /// Title of the onboarding screen.
+  ///
+  /// Pass a localized string; without one the platform SDK's own default is
+  /// used. Native platforms only — on web the component has no title bar.
+  final String? title;
+
+  /// Which requirements onboarding collects.
+  ///
+  /// Currently due requirements are always collected; this asks for more on
+  /// top of them. Not supported in WebView mode, where the hosted page decides
+  /// what it collects.
+  final AccountCollectionOptions? collectionOptions;
+
+  /// URL to your full terms of service agreement, shown in place of Stripe's
+  /// own link.
+  final String? fullTermsOfServiceUrl;
+
+  /// URL to your recipient terms of service agreement.
+  final String? recipientTermsOfServiceUrl;
+
+  /// Absolute URL to your privacy policy.
+  final String? privacyPolicyUrl;
+
+  /// If true, onboarding skips terms of service collection and you must
+  /// collect acceptance yourself.
+  final bool? skipTermsOfServiceCollection;
+
   /// If true, use WebView implementation instead of native SDK.
   /// Requires [StripeConnect.webViewConfig] to be configured.
   /// Default is false (uses native component on iOS/Android).
@@ -65,6 +93,12 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.onExit,
     this.appearance,
     this.gestureRecognizers,
+    this.title,
+    this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
     this.useWebView = false,
   });
 
@@ -76,6 +110,11 @@ class StripeAccountOnboarding extends StatelessWidget {
         onLoadError: onLoadError,
         onExit: onExit,
         appearance: appearance,
+        collectionOptions: collectionOptions,
+        fullTermsOfServiceUrl: fullTermsOfServiceUrl,
+        recipientTermsOfServiceUrl: recipientTermsOfServiceUrl,
+        privacyPolicyUrl: privacyPolicyUrl,
+        skipTermsOfServiceCollection: skipTermsOfServiceCollection,
       );
     }
 
@@ -107,6 +146,18 @@ class StripeAccountOnboarding extends StatelessWidget {
       onExit: onExit,
       appearance: appearance,
       gestureRecognizers: gestureRecognizers,
+      extraParams: {
+        if (title != null) 'title': title,
+        if (collectionOptions != null)
+          'collectionOptions': collectionOptions!.toMap(),
+        if (fullTermsOfServiceUrl != null)
+          'fullTermsOfServiceUrl': fullTermsOfServiceUrl,
+        if (recipientTermsOfServiceUrl != null)
+          'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
+        if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
+        if (skipTermsOfServiceCollection != null)
+          'skipTermsOfServiceCollection': skipTermsOfServiceCollection,
+      },
     );
   }
 }
@@ -775,7 +826,6 @@ class _StripeConnectPlatformView extends StatefulWidget {
     this.onLoadError,
     this.onExit,
     this.appearance,
-    // ignore: unused_element_parameter
     this.extraParams,
     this.gestureRecognizers,
   });

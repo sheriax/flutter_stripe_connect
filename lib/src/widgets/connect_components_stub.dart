@@ -6,6 +6,7 @@ library flutter_stripe_connect_components_stub;
 
 import 'package:flutter/widgets.dart';
 import '../stripe_connect.dart';
+import '../models/account_collection_options.dart';
 
 /// Stub for web account onboarding
 class StripeAccountOnboardingWeb extends StatelessWidget {
@@ -13,6 +14,11 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
   final void Function(String)? onLoadError;
   final VoidCallback? onExit;
   final ConnectAppearance? appearance;
+  final AccountCollectionOptions? collectionOptions;
+  final String? fullTermsOfServiceUrl;
+  final String? recipientTermsOfServiceUrl;
+  final String? privacyPolicyUrl;
+  final bool? skipTermsOfServiceCollection;
 
   const StripeAccountOnboardingWeb({
     super.key,
@@ -20,6 +26,11 @@ class StripeAccountOnboardingWeb extends StatelessWidget {
     this.onLoadError,
     this.onExit,
     this.appearance,
+    this.collectionOptions,
+    this.fullTermsOfServiceUrl,
+    this.recipientTermsOfServiceUrl,
+    this.privacyPolicyUrl,
+    this.skipTermsOfServiceCollection,
   });
 
   @override

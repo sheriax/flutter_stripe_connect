@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "flutter-stripe-connect", targets: ["flutter_stripe_connect"])
     ],
     dependencies: [
-        .package(url: "https://github.com/stripe/stripe-ios-spm", from: "24.0.0")
+        .package(url: "https://github.com/stripe/stripe-ios-spm", "26.0.0"..<"27.0.0")
     ],
     targets: [
         .target(

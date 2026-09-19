@@ -1,5 +1,49 @@
 # Changelog
 
+## Unreleased
+
+* **Requirement Collection Options** - `AccountCollectionOptions` on
+  `StripeConnect.presentAccountOnboarding` and on the `StripeAccountOnboarding`
+  widget, so onboarding can collect `eventually_due` and future requirements
+  instead of only what is currently due. Supported on iOS, Android and Web
+* **Terms of Service and Privacy Policy URLs** - `fullTermsOfServiceUrl`,
+  `recipientTermsOfServiceUrl`, `privacyPolicyUrl` and
+  `skipTermsOfServiceCollection` are now passed through to the component
+* **Onboarding Title** - `title` replaces the hardcoded English
+  "Account Onboarding" on Android and the missing title on iOS
+* **Appearance Applied on Native** - `ConnectAppearance` passed to `initialize`
+  now reaches the iOS and Android component managers, which previously dropped
+  it; `StripeConnect.updateAppearance` restyles components already on screen
+  - On Android the action and form colors go through `Action` and `Form`,
+    which replace the deprecated setters on `Colors.Builder`
+  - Web now sends `actionPrimaryText`, `actionSecondaryText`, `formBackground`
+    and `formHighlightBorder` on to Connect.js; four of the nine documented
+    colors were being dropped
+  - `cornerRadius` reaches Connect.js as a pixel value, so it applies on web
+    at all
+  - `fontFamily` is documented for what it does: components render in a web
+    context that has no access to the app's own fonts, and the plugin does
+    not pass font files to the SDKs, so only system families render
+* **Updated iOS Dependency** - `StripeConnect` moved to `~> 26.0`
+* **Updated Android Dependency** - `com.stripe:connect` upgraded to `23.17.1`
+  - Drops the `PreviewConnectSDK` opt-in, which no longer exists in the SDK
+  - The example no longer declares `com.stripe:connect` itself; it was pinned
+    to 22.4.0 and the plugin already brings the SDK in
+* **Fixed Swift Package Manager Dependency** - `Package.swift` resolved a
+  different StripeConnect major than the podspec asked for
+* **Bridge Tests** - the Kotlin and Swift argument decoders are covered by unit
+  tests; neither `./gradlew testDebugUnitTest` nor `xcodebuild test` passed
+  before, both calling a `getPlatformVersion` handler that no longer exists
+* **Connect.js Names Tested** - the appearance variables and component names
+  moved out of the interop layer into `connectAppearanceVariables` and
+  `connectComponentName`, which `flutter test` covers without a browser
+* **Fixed iOS Example** - the Runner target was left at iOS 13.0 while the
+  plugin requires 15.0, so the example could not be built for iOS
+  - `Podfile.lock` still pinned `flutter_stripe_connect 0.2.1` and
+    `StripeConnect 25.2.0`, so `pod install` failed on a fresh checkout
+  - Every pod target is now raised to iOS 15.0; Flutter's own `post_install`
+    helper only raises them to the Flutter minimum
+
 ## 0.3.7
 
 * **Fixed Scroll Issue on Flutter Web & WebView** ([#3](https://github.com/sheriax/flutter_stripe_connect/issues/3))

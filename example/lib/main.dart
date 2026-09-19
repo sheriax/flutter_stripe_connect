@@ -86,6 +86,12 @@ class AppState extends ChangeNotifier {
       await StripeConnect.instance.initialize(
         publishableKey: publishableKey,
         clientSecretProvider: _fetchClientSecret,
+        // Appearance belongs to the Stripe instance, so it is set here once
+        // and applies to every component.
+        appearance: const ConnectAppearance(
+          colors: ConnectColors(primary: '#6366f1', background: '#ffffff'),
+          cornerRadius: 8,
+        ),
       );
       _isInitialized = true;
       _isLoading = false;
@@ -520,15 +526,18 @@ class OnboardingScreen extends StatelessWidget {
         leading: BackButton(onPressed: () => context.go(AppRoutes.home)),
       ),
       body: StripeAccountOnboarding(
+        title: 'Account Onboarding',
         onLoaded: () => debugPrint('Onboarding loaded'),
         onLoadError: (error) => _showError(context, error),
         onExit: () {
           debugPrint('User exited onboarding');
           context.go(AppRoutes.home);
         },
-        appearance: const ConnectAppearance(
-          colors: ConnectColors(primary: '#6366f1', background: '#ffffff'),
-          cornerRadius: 8,
+        // Ask for everything that will eventually be due rather than only
+        // what is due today, so the account comes out of onboarding complete.
+        collectionOptions: const AccountCollectionOptions(
+          fields: AccountFieldOption.eventuallyDue,
+          futureRequirements: AccountFutureRequirementOption.include,
         ),
       ),
     );
