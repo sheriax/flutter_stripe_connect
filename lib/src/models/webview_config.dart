@@ -45,8 +45,8 @@ class WebViewConfig {
     final queryParams = <String, String>{
       publishableKeyParam: publishableKey,
       clientSecretParam: clientSecret,
-      if (theme != null) 'theme': theme!,
-      if (primaryColor != null) 'primaryColor': primaryColor!,
+      'theme': ?theme,
+      'primaryColor': ?primaryColor,
       ...?extraParams,
     };
 

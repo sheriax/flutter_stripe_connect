@@ -1,7 +1,7 @@
 /// Web-specific component widgets for Stripe Connect
 ///
 /// These widgets use HtmlElementView to embed Connect.js components.
-library flutter_stripe_connect_web_components;
+library;
 
 import 'dart:ui_web' as ui_web;
 import 'dart:math' as math;

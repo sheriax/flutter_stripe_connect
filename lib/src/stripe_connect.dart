@@ -173,14 +173,12 @@ class StripeConnect {
 
     try {
       await _channel.invokeMethod('presentAccountOnboarding', {
-        if (title != null) 'title': title,
+        'title': ?title,
         if (collectionOptions != null)
           'collectionOptions': collectionOptions.toMap(),
-        if (fullTermsOfServiceUrl != null)
-          'fullTermsOfServiceUrl': fullTermsOfServiceUrl,
-        if (recipientTermsOfServiceUrl != null)
-          'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
-        if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
+        'fullTermsOfServiceUrl': ?fullTermsOfServiceUrl,
+        'recipientTermsOfServiceUrl': ?recipientTermsOfServiceUrl,
+        'privacyPolicyUrl': ?privacyPolicyUrl,
         if (skipTermsOfServiceCollection != null &&
             collectionOptions?.excludeTermsOfService != true)
           'skipTermsOfServiceCollection': skipTermsOfServiceCollection,

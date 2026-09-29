@@ -1,5 +1,5 @@
 /// Web plugin registration for Flutter Stripe Connect
-library flutter_stripe_connect_web;
+library;
 
 import 'dart:async';
 

@@ -2,7 +2,7 @@
 ///
 /// This file provides JavaScript interop with Stripe's Connect.js library
 /// for web platform support.
-library flutter_stripe_connect_web;
+library;
 
 import 'dart:async';
 import 'dart:js_interop';

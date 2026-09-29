@@ -2,7 +2,7 @@
 ///
 /// This file provides placeholder implementations that are never actually
 /// used on non-web platforms - the kIsWeb check prevents their use.
-library flutter_stripe_connect_stub;
+library;
 
 import 'stripe_connect.dart';
 

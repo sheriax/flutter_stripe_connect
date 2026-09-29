@@ -19,6 +19,9 @@
   `StripeConnect.initialize` and `updateAppearance`.
 * **Android SDK** - Update `com.stripe:connect` from `23.17.1` to `23.21.0`.
   Align the plugin and example with Stripe's compile SDK 36 requirement.
+* **Tooling** - Move to `flutter_lints` 6 and apply its fixes. Add a CI workflow
+  that runs `flutter analyze`, `flutter test` and a publish dry run. Keep the
+  internal `doc/RESEARCH.md` notes out of the published package.
 
 ## 0.4.0
 
