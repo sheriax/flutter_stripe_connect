@@ -1,5 +1,5 @@
 /// Web stub for the mobile-only WebView widget.
-library flutter_stripe_connect_webview_stub;
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
