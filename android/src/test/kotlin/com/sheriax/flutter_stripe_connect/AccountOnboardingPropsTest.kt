@@ -30,6 +30,20 @@ internal class AccountOnboardingPropsTest {
     }
 
     @Test
+    fun `maps the terms requirement exclusion to the Android SDK flag`() {
+        val props = accountOnboardingProps(
+            mapOf(
+                "skipTermsOfServiceCollection" to false,
+                "collectionOptions" to mapOf(
+                    "requirements" to mapOf("exclude" to listOf("tos_acceptance.*"))
+                ),
+            )
+        )
+
+        assertEquals(true, props.skipTermsOfServiceCollection)
+    }
+
+    @Test
     fun `leaves the arguments unset when nothing was sent`() {
         val props = accountOnboardingProps(null)
 

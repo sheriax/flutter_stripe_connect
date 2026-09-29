@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_stripe_connect (0.3.7):
+  - flutter_stripe_connect (0.4.0):
     - Flutter
     - StripeConnect (~> 26.0)
   - integration_test (0.0.1):
@@ -44,7 +44,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_stripe_connect: 9eab577e4b1fdffe78b4f74d5d3433e0fcf65bb7
+  flutter_stripe_connect: ad2055ff627e4288a36ad9e2307d8e26c2de1540
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   StripeConnect: f8e1e9eca6cb33946e27ef3dd3ddf2c5e6ba1017
   StripeCore: 21d74e81c1bb74b711a8d06988ca675d21fdbcf8

@@ -239,13 +239,19 @@ await StripeConnect.presentAccountOnboarding(
   fullTermsOfServiceUrl: 'https://example.com/terms',
   recipientTermsOfServiceUrl: 'https://example.com/recipient-terms',
   privacyPolicyUrl: 'https://example.com/privacy',
-  skipTermsOfServiceCollection: true,
+  collectionOptions: const AccountCollectionOptions(
+    excludeTermsOfService: true,
+  ),
 );
 ```
 
 Both sets of options are also available on the `StripeAccountOnboarding`
 widget. `title` applies to native platforms only — on web the component has no
-title bar of its own.
+title bar of its own. Excluding terms acceptance hides it from onboarding; your
+platform must collect and record acceptance separately. On Android, the native
+SDK does not expose requirement restrictions to plugin callers, so the plugin
+uses the equivalent terms collection flag. The older
+`skipTermsOfServiceCollection` argument remains available but is deprecated.
 
 #### Account Management
 
@@ -353,8 +359,8 @@ before it is handed to the SDK, so the generic CSS families (`sans-serif`,
 `serif`, `monospace`) that Android and web accept are rejected there and fall
 back to `-apple-system`. Name a concrete font rather than a generic family.
 
-> **Note**: the `appearance` argument on the individual component widgets is
-> not applied. Set it through `initialize` or `updateAppearance` instead.
+> **Note**: the deprecated `appearance` argument on individual component widgets
+> has no effect. Set it through `initialize` or `updateAppearance` instead.
 
 ## Server-Side Setup
 
@@ -405,7 +411,7 @@ app.post('/create-account-session', async (req, res) => {
 
 - Flutter SDK `>=3.10.0`
 - Dart SDK `>=3.0.0 <4.0.0`
-- Android: `minSdk 21`
+- Android: `minSdk 23`, `compileSdk 36`
 - iOS: `iOS 15.0+`
 - Web: Modern browsers (Chrome, Firefox, Safari, Edge)
 

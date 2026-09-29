@@ -173,6 +173,12 @@ enum AccountOnboardingArguments {
             options.futureRequirements = option
         }
 
+        if let requirements = map["requirements"] as? [String: Any],
+           let excluded = requirements["exclude"] as? [String],
+           excluded.contains("tos_acceptance.*") {
+            options.requirements = .exclude(excluded)
+        }
+
         return options
     }
 

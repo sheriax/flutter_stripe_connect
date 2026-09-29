@@ -378,9 +378,21 @@ internal fun accountOnboardingProps(args: Map<*, *>?): AccountOnboardingProps {
         fullTermsOfServiceUrl = args?.get("fullTermsOfServiceUrl") as? String,
         recipientTermsOfServiceUrl = args?.get("recipientTermsOfServiceUrl") as? String,
         privacyPolicyUrl = args?.get("privacyPolicyUrl") as? String,
-        skipTermsOfServiceCollection = args?.get("skipTermsOfServiceCollection") as? Boolean,
+        skipTermsOfServiceCollection = if (excludesTermsOfService(args)) {
+            true
+        } else {
+            args?.get("skipTermsOfServiceCollection") as? Boolean
+        },
         collectionOptions = accountCollectionOptions(args),
     )
+}
+
+/** Stripe has not exposed CollectionOptions.requirements outside its Android SDK module. */
+internal fun excludesTermsOfService(args: Map<*, *>?): Boolean {
+    val options = args?.get("collectionOptions") as? Map<*, *> ?: return false
+    val requirements = options["requirements"] as? Map<*, *> ?: return false
+    val excluded = requirements["exclude"] as? List<*> ?: return false
+    return excluded.contains("tos_acceptance.*")
 }
 
 /**

@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+* **Terms Collection** - Add `AccountCollectionOptions.excludeTermsOfService`
+  using Stripe's `tos_acceptance.*` requirement exclusion on web and iOS, with
+  the equivalent native flag on Android. Deprecate the older
+  `skipTermsOfServiceCollection` argument.
+* **Appearance API** - Deprecate the ineffective `appearance` argument on
+  individual component widgets. Appearance remains available through
+  `StripeConnect.initialize` and `updateAppearance`.
+* **Android SDK** - Update `com.stripe:connect` from `23.17.1` to `23.21.0`.
+  Align the plugin and example with Stripe's Android 23 minimum and compile
+  SDK 36 requirement.
+
 ## 0.4.0
 
 * **Example Setup** - Use a configured test account on the local example server
