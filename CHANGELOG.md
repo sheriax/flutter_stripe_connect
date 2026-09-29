@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.4.0
+
+* **Example Setup** - Use a configured test account on the local example server
+  and pass the example app's publishable key with `--dart-define` instead of
+  embedding account and key values in source
 
 * **Requirement Collection Options** - `AccountCollectionOptions` on
   `StripeConnect.presentAccountOnboarding` and on the `StripeAccountOnboarding`

@@ -63,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.3.7
+  flutter_stripe_connect: ^0.4.0
 ```
 
 ## Platform Setup
@@ -358,14 +358,19 @@ back to `-apple-system`. Name a concrete font rather than a generic family.
 
 ## Server-Side Setup
 
-To use Stripe Connect embedded components, you need to create an Account Session on your server. Here's an example using Node.js:
+To use Stripe Connect embedded components, create an Account Session on your
+server. Authenticate the caller, resolve their connected account on the server,
+and enable only the components and features their role permits. This Node.js
+example illustrates the component configuration; supply your own authentication
+and account lookup:
 
 ```javascript
 const stripe = require('stripe')('sk_test_...');
 
 app.post('/create-account-session', async (req, res) => {
+  const connectedAccountId = await getConnectedAccountIdForAuthenticatedUser(req);
   const accountSession = await stripe.accountSessions.create({
-    account: 'acct_...', // Connected account ID
+    account: connectedAccountId,
     components: {
       account_onboarding: { enabled: true },
       account_management: { enabled: true },
@@ -413,4 +418,3 @@ app.post('/create-account-session', async (req, res) => {
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
-

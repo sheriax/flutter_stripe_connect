@@ -1,8 +1,18 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const secretKey = process.env.STRIPE_SECRET_KEY;
+const connectedAccountId = process.env.CONNECTED_ACCOUNT_ID;
+
+if (!secretKey?.startsWith('sk_test_') || !connectedAccountId) {
+  throw new Error(
+    'Set STRIPE_SECRET_KEY to a test secret key and CONNECTED_ACCOUNT_ID before starting the example server.',
+  );
+}
+
+const stripe = new Stripe(secretKey);
 
 const server = Bun.serve({
+  hostname: '127.0.0.1',
   port: process.env.PORT || 3000,
   async fetch(request) {
     const url = new URL(request.url);
@@ -31,9 +41,6 @@ const server = Bun.serve({
     // Create account session
     if (url.pathname === '/account-session' && request.method === 'POST') {
       try {
-        const body = await request.json() as { accountId: string };
-        const connectedAccountId = body.accountId ?? process.env.SAMPLE_CONNECTED_ACC_ID!;
-
         const accountSession = await stripe.accountSessions.create({
           account: connectedAccountId,
           components: {

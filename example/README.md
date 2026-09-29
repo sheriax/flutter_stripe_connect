@@ -1,16 +1,23 @@
-# flutter_stripe_connect_example
+# Flutter Stripe Connect example
 
-Demonstrates how to use the flutter_stripe_connect plugin.
+This example uses a local Bun server to create Stripe Account Sessions for one
+connected **test** account. The account ID and secret key stay on the server.
 
-## Getting Started
+1. In `server/`, run `bun install` and set `STRIPE_SECRET_KEY` and
+   `CONNECTED_ACCOUNT_ID` as described in [server/README.md](server/README.md).
+2. Run `bun run start` from `server/`.
+3. From this directory, run the Flutter app with your test publishable key:
 
-This project is a starting point for a Flutter application.
+   ```sh
+   flutter run -d chrome --dart-define=STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
+   ```
 
-A few resources to get you started if this is your first Flutter project:
+The app requests a fresh Account Session from
+`http://localhost:3000/account-session` whenever Stripe needs one. For an Android
+emulator, add `--dart-define=ACCOUNT_SESSION_URL=http://10.0.2.2:3000/account-session`.
+For a physical device, use a reachable HTTPS server and set
+`ACCOUNT_SESSION_URL` to its endpoint.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This server is for local testing only. A deployed backend must authenticate the
+user, determine their connected account on the server, and enable only the
+components and features allowed for their role.

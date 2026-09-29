@@ -80,8 +80,10 @@ class AppState extends ChangeNotifier {
     notifyListeners();
 
     try {
-      const String publishableKey =
-          'pk_test_51S8VfeDNmGBmmekGKA8WYt57O1xg5xoefjAKMLrieoe2d539F5xUoWd4xRD0vRgyVppQjIr75pzAln5khchyIDmM00u9bSCJJf';
+      const publishableKey = String.fromEnvironment('STRIPE_PUBLISHABLE_KEY');
+      if (publishableKey.isEmpty) {
+        throw StateError('Set STRIPE_PUBLISHABLE_KEY with --dart-define.');
+      }
 
       await StripeConnect.instance.initialize(
         publishableKey: publishableKey,
@@ -105,11 +107,11 @@ class AppState extends ChangeNotifier {
 
   Future<String> _fetchClientSecret() async {
     try {
-      final response = await http.post(
-        Uri.parse("http://localhost:3000/account-session"),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'accountId': 'acct_1SVw6YDZmxxyNwRz'}),
+      const accountSessionUrl = String.fromEnvironment(
+        'ACCOUNT_SESSION_URL',
+        defaultValue: 'http://localhost:3000/account-session',
       );
+      final response = await http.post(Uri.parse(accountSessionUrl));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
