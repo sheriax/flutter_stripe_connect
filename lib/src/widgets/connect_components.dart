@@ -1,16 +1,16 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../stripe_connect.dart';
 import '../models/account_collection_options.dart';
-import 'webview_components.dart';
+import 'webview_components.dart'
+    if (dart.library.js_interop) 'webview_components_stub.dart';
 
 // Conditional import for web support
 import 'connect_components_stub.dart'
-    if (dart.library.html) 'web_components.dart' as web_impl;
+    if (dart.library.js_interop) 'web_components.dart'
+    as web_impl;
 
 /// Callback for when a component finishes loading
 typedef OnLoadCallback = void Function();
@@ -92,7 +92,8 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.onLoadError,
     this.onExit,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
     this.title,
@@ -119,8 +120,8 @@ class StripeAccountOnboarding extends StatelessWidget {
         privacyPolicyUrl: privacyPolicyUrl,
         skipTermsOfServiceCollection:
             collectionOptions?.excludeTermsOfService == true
-                ? null
-                : skipTermsOfServiceCollection,
+            ? null
+            : skipTermsOfServiceCollection,
       );
     }
 
@@ -138,10 +139,9 @@ class StripeAccountOnboarding extends StatelessWidget {
         );
       }
       onLoadError?.call(
-          'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()');
-      return const Center(
-        child: Text('WebView configuration required'),
+        'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()',
       );
+      return const Center(child: Text('WebView configuration required'));
     }
 
     // Default: Use native platform view
@@ -190,7 +190,8 @@ class StripeAccountManagement extends StatelessWidget {
     this.onLoadError,
     this.collectionOptions,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
     this.useWebView = false,
@@ -221,14 +222,10 @@ class StripeAccountManagement extends StatelessWidget {
       onLoadError?.call(
         'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()',
       );
-      return const Center(
-        child: Text(
-          'WebView configuration required',
-        ),
-      );
+      return const Center(child: Text('WebView configuration required'));
     }
 
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       return _StripeConnectPlatformView(
         viewType: StripeConnectViewType.accountManagement,
         onLoaded: onLoaded,
@@ -269,7 +266,8 @@ class StripePayouts extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
     this.useWebView = false,
@@ -298,10 +296,9 @@ class StripePayouts extends StatelessWidget {
         );
       }
       onLoadError?.call(
-          'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()');
-      return const Center(
-        child: Text('WebView configuration required'),
+        'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()',
       );
+      return const Center(child: Text('WebView configuration required'));
     }
 
     // Default: Use native platform view
@@ -334,7 +331,8 @@ class StripePayments extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
     this.useWebView = false,
@@ -363,10 +361,9 @@ class StripePayments extends StatelessWidget {
         );
       }
       onLoadError?.call(
-          'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()');
-      return const Center(
-        child: Text('WebView configuration required'),
+        'useWebView requires webViewConfig. Configure webViewConfig in StripeConnect.initialize()',
       );
+      return const Center(child: Text('WebView configuration required'));
     }
 
     // Default: Use native platform view
@@ -394,7 +391,8 @@ class StripeNotificationBanner extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -422,7 +420,8 @@ class StripeNotificationBanner extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Notification Banner requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
+      'Notification Banner requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
+    );
     return const Center(
       child: Text('Notification Banner requires WebView mode'),
     );
@@ -443,7 +442,8 @@ class StripeBalances extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -471,10 +471,9 @@ class StripeBalances extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Balances requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Balances requires WebView mode'),
+      'Balances requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Balances requires WebView mode'));
   }
 }
 
@@ -492,7 +491,8 @@ class StripeDocuments extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -520,10 +520,9 @@ class StripeDocuments extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Documents requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Documents requires WebView mode'),
+      'Documents requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Documents requires WebView mode'));
   }
 }
 
@@ -541,7 +540,8 @@ class StripeTaxSettings extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -569,10 +569,9 @@ class StripeTaxSettings extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Tax Settings requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Tax Settings requires WebView mode'),
+      'Tax Settings requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Tax Settings requires WebView mode'));
   }
 }
 
@@ -590,7 +589,8 @@ class StripeTaxRegistrations extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -618,10 +618,9 @@ class StripeTaxRegistrations extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Tax Registrations requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Tax Registrations requires WebView mode'),
+      'Tax Registrations requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Tax Registrations requires WebView mode'));
   }
 }
 
@@ -639,7 +638,8 @@ class StripePayoutsList extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -667,10 +667,9 @@ class StripePayoutsList extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Payouts List requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Payouts List requires WebView mode'),
+      'Payouts List requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Payouts List requires WebView mode'));
   }
 }
 
@@ -693,7 +692,8 @@ class StripePaymentDetails extends StatelessWidget {
     this.onLoadError,
     this.onClose,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
     this.paymentId,
@@ -726,10 +726,9 @@ class StripePaymentDetails extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Payment Details requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Payment Details requires WebView mode'),
+      'Payment Details requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Payment Details requires WebView mode'));
   }
 }
 
@@ -752,7 +751,8 @@ class StripePayoutDetails extends StatelessWidget {
     this.onLoadError,
     this.onClose,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
     this.payoutId,
@@ -785,10 +785,9 @@ class StripePayoutDetails extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Payout Details requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Payout Details requires WebView mode'),
+      'Payout Details requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Payout Details requires WebView mode'));
   }
 }
 
@@ -806,7 +805,8 @@ class StripeDisputesList extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     @Deprecated(
-        'Set appearance with StripeConnect.initialize or updateAppearance.')
+      'Set appearance with StripeConnect.initialize or updateAppearance.',
+    )
     this.appearance,
     this.gestureRecognizers,
   });
@@ -834,10 +834,9 @@ class StripeDisputesList extends StatelessWidget {
 
     // Not available on mobile without WebView
     onLoadError?.call(
-        'Disputes List requires WebView mode. Configure webViewConfig in StripeConnect.initialize()');
-    return const Center(
-      child: Text('Disputes List requires WebView mode'),
+      'Disputes List requires WebView mode. Configure webViewConfig in StripeConnect.initialize()',
     );
+    return const Center(child: Text('Disputes List requires WebView mode'));
   }
 }
 
@@ -897,9 +896,9 @@ class _StripeConnectPlatformViewState
   }
 
   Map<String, dynamic> get _creationParams => {
-        if (widget.appearance != null) 'appearance': widget.appearance!.toMap(),
-        ...?widget.extraParams,
-      };
+    if (widget.appearance != null) 'appearance': widget.appearance!.toMap(),
+    ...?widget.extraParams,
+  };
 
   @override
   Widget build(BuildContext context) {

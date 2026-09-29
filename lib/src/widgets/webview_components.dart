@@ -7,47 +7,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../models/webview_config.dart';
 import '../stripe_connect.dart';
 
-/// Component paths for Stripe Connect WebView
-class StripeConnectPaths {
-  // Onboarding & Compliance
-  static const accountOnboarding = '/onboarding';
-  static const accountManagement = '/account';
-  static const notificationBanner = '/notifications';
-
-  // Payments
-  static const payments = '/payments';
-  static const paymentDetails = '/payment-details';
-  static const paymentMethodSettings = '/payment-methods';
-  static const disputesForPayment = '/dispute';
-  static const disputesList = '/disputes';
-
-  // Payouts
-  static const payouts = '/payouts';
-  static const payoutDetails = '/payout-details';
-  static const payoutsList = '/payouts-list';
-  static const balances = '/balances';
-  static const instantPayoutsPromotion = '/instant-payouts';
-  static const recipients = '/recipients';
-
-  // Capital
-  static const capitalFinancing = '/capital';
-  static const capitalFinancingApplication = '/capital-apply';
-  static const capitalFinancingPromotion = '/capital-promo';
-
-  // Tax
-  static const taxRegistrations = '/tax-registrations';
-  static const taxSettings = '/tax-settings';
-
-  // Financial Services / Issuing
-  static const financialAccount = '/financial-account';
-  static const financialAccountTransactions = '/financial-txns';
-  static const issuingCard = '/issuing-card';
-  static const issuingCardsList = '/issuing-cards';
-
-  // Reporting
-  static const documents = '/documents';
-  static const reportingChart = '/reporting';
-}
+export 'webview_paths.dart';
 
 /// Callback for when a component finishes loading
 typedef OnLoadCallback = void Function();
@@ -266,12 +226,15 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
       children: [
         WebViewWidget(
           controller: _controller,
-          gestureRecognizers: widget.gestureRecognizers ??
+          gestureRecognizers:
+              widget.gestureRecognizers ??
               <Factory<OneSequenceGestureRecognizer>>{
                 Factory<VerticalDragGestureRecognizer>(
-                    () => VerticalDragGestureRecognizer()),
+                  () => VerticalDragGestureRecognizer(),
+                ),
                 Factory<HorizontalDragGestureRecognizer>(
-                    () => HorizontalDragGestureRecognizer()),
+                  () => HorizontalDragGestureRecognizer(),
+                ),
               },
         ),
         if (_isLoading) const Center(child: CircularProgressIndicator()),

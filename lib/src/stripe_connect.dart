@@ -8,7 +8,8 @@ import 'widgets/connect_components.dart'
 
 // Conditional import for web support
 import 'stripe_connect_stub.dart'
-    if (dart.library.html) 'stripe_connect_web.dart' as web_impl;
+    if (dart.library.js_interop) 'stripe_connect_web.dart'
+    as web_impl;
 
 typedef ClientSecretProvider = Future<String> Function();
 
@@ -161,7 +162,8 @@ class StripeConnect {
   }) async {
     if (kIsWeb) {
       onLoadError?.call(
-          'presentAccountOnboarding is not supported on web. Use StripeAccountOnboarding widget instead.');
+        'presentAccountOnboarding is not supported on web. Use StripeAccountOnboarding widget instead.',
+      );
       return;
     }
 
@@ -211,10 +213,10 @@ class ConnectAppearance {
   const ConnectAppearance({this.fontFamily, this.colors, this.cornerRadius});
 
   Map<String, dynamic> toMap() => {
-        if (fontFamily != null) 'fontFamily': fontFamily,
-        if (colors != null) 'colors': colors!.toMap(),
-        if (cornerRadius != null) 'cornerRadius': cornerRadius,
-      };
+    if (fontFamily != null) 'fontFamily': fontFamily,
+    if (colors != null) 'colors': colors!.toMap(),
+    if (cornerRadius != null) 'cornerRadius': cornerRadius,
+  };
 }
 
 class ConnectColors {
@@ -241,16 +243,14 @@ class ConnectColors {
   });
 
   Map<String, dynamic> toMap() => {
-        if (primary != null) 'primary': primary,
-        if (background != null) 'background': background,
-        if (text != null) 'text': text,
-        if (secondaryText != null) 'secondaryText': secondaryText,
-        if (border != null) 'border': border,
-        if (actionPrimaryText != null) 'actionPrimaryText': actionPrimaryText,
-        if (actionSecondaryText != null)
-          'actionSecondaryText': actionSecondaryText,
-        if (formBackground != null) 'formBackground': formBackground,
-        if (formHighlightBorder != null)
-          'formHighlightBorder': formHighlightBorder,
-      };
+    if (primary != null) 'primary': primary,
+    if (background != null) 'background': background,
+    if (text != null) 'text': text,
+    if (secondaryText != null) 'secondaryText': secondaryText,
+    if (border != null) 'border': border,
+    if (actionPrimaryText != null) 'actionPrimaryText': actionPrimaryText,
+    if (actionSecondaryText != null) 'actionSecondaryText': actionSecondaryText,
+    if (formBackground != null) 'formBackground': formBackground,
+    if (formHighlightBorder != null) 'formHighlightBorder': formHighlightBorder,
+  };
 }

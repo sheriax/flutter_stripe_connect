@@ -63,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.4.0
+  flutter_stripe_connect: ^0.5.0
 ```
 
 ## Platform Setup
@@ -409,9 +409,9 @@ app.post('/create-account-session', async (req, res) => {
 
 ## Requirements
 
-- Flutter SDK `>=3.10.0`
-- Dart SDK `>=3.0.0 <4.0.0`
-- Android: `minSdk 23`, `compileSdk 36`
+- Flutter SDK `>=3.44.0`
+- Dart SDK `>=3.12.0 <4.0.0`
+- Android: `minSdk 24`, `compileSdk 36`
 - iOS: `iOS 15.0+`
 - Web: Modern browsers (Chrome, Firefox, Safari, Edge)
 

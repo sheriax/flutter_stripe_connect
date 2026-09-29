@@ -73,11 +73,11 @@ class AccountCollectionOptions {
   final bool excludeTermsOfService;
 
   Map<String, dynamic> toMap() => {
-        'fields': fields.value,
-        'futureRequirements': futureRequirements.value,
-        if (excludeTermsOfService)
-          'requirements': {
-            'exclude': ['tos_acceptance.*'],
-          },
-      };
+    'fields': fields.value,
+    'futureRequirements': futureRequirements.value,
+    if (excludeTermsOfService)
+      'requirements': {
+        'exclude': ['tos_acceptance.*'],
+      },
+  };
 }

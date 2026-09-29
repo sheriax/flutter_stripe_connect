@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        // AGP 9.0 bundles Kotlin 2.2.10; Flutter 3.47 requires a newer version.
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.20")
+    }
+}
+
 allprojects {
     repositories {
         google()

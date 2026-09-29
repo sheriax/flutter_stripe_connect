@@ -87,24 +87,20 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
 
   void _registerViewFactory() {
     // Register the platform view factory for this component
-    ui_web.platformViewRegistry.registerViewFactory(
-      _viewType,
-      (int viewId) {
-        final container =
-            web.document.createElement('div') as web.HTMLDivElement;
-        container.style
-          ..width = '100%'
-          ..height = '100%'
-          ..display = 'flex'
-          ..flexDirection = 'column'
-          ..overflow = 'auto';
+    ui_web.platformViewRegistry.registerViewFactory(_viewType, (int viewId) {
+      final container = web.document.createElement('div') as web.HTMLDivElement;
+      container.style
+        ..width = '100%'
+        ..height = '100%'
+        ..display = 'flex'
+        ..flexDirection = 'column'
+        ..overflow = 'auto';
 
-        // Schedule component creation after the container is added to DOM
-        _createComponentAsync(container);
+      // Schedule component creation after the container is added to DOM
+      _createComponentAsync(container);
 
-        return container;
-      },
-    );
+      return container;
+    });
     _isCreated = true;
   }
 
@@ -149,7 +145,8 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
       container.appendChild(component);
 
       debugPrint(
-          'StripeConnectWebView: Component ${widget.componentType.value} created successfully');
+        'StripeConnectWebView: Component ${widget.componentType.value} created successfully',
+      );
       widget.onLoaded?.call();
     } catch (e) {
       final errorMsg = 'Error creating component: $e';
@@ -178,9 +175,7 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
   @override
   Widget build(BuildContext context) {
     if (!_isCreated) {
-      return const Center(
-        child: Text('Loading...'),
-      );
+      return const Center(child: Text('Loading...'));
     }
 
     if (_hasError) {
@@ -192,9 +187,7 @@ class _StripeConnectWebViewState extends State<StripeConnectWebView> {
       );
     }
 
-    return HtmlElementView(
-      viewType: _viewType,
-    );
+    return HtmlElementView(viewType: _viewType);
   }
 }
 

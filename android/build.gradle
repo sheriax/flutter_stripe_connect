@@ -1,18 +1,9 @@
-group 'com.sheriax.flutter_stripe_connect'
-version '0.4.0'
-
-buildscript {
-    ext.kotlin_version = '1.9.22'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id 'com.android.library'
 }
+
+group 'com.sheriax.flutter_stripe_connect'
+version '0.5.0'
 
 allprojects {
     repositories {
@@ -21,20 +12,13 @@ allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
 android {
     namespace 'com.sheriax.flutter_stripe_connect'
     compileSdk 36
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     sourceSets {
@@ -43,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        minSdk 23
+        minSdk 24
     }
 
     buildFeatures {
@@ -51,9 +35,13 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    
     // Stripe Connect SDK
     implementation 'com.stripe:connect:23.21.0'
     
@@ -62,5 +50,4 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }

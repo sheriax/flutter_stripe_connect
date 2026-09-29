@@ -1,7 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
+* **WebAssembly compatibility** - Select the Connect.js implementation for
+  both JavaScript and Wasm web builds. Remove the unconditional `dart:io`
+  import from the component widgets and keep mobile WebView imports out of
+  web builds.
+* **Built-in Kotlin** - Migrate the Android plugin and example off the legacy
+  Kotlin Gradle plugin. The minimum supported SDKs are now Flutter 3.44 and
+  Dart 3.12; the example validates the migration with AGP 9. Update
+  `webview_flutter` to a compatible version, raising Android minSdk to 24.
 * **Terms Collection** - Add `AccountCollectionOptions.excludeTermsOfService`
   using Stripe's `tos_acceptance.*` requirement exclusion on web and iOS, with
   the equivalent native flag on Android. Deprecate the older
@@ -10,8 +18,7 @@
   individual component widgets. Appearance remains available through
   `StripeConnect.initialize` and `updateAppearance`.
 * **Android SDK** - Update `com.stripe:connect` from `23.17.1` to `23.21.0`.
-  Align the plugin and example with Stripe's Android 23 minimum and compile
-  SDK 36 requirement.
+  Align the plugin and example with Stripe's compile SDK 36 requirement.
 
 ## 0.4.0
 

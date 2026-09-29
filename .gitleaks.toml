@@ -1,0 +1,8 @@
+title = "flutter_stripe_connect secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documentation uses an intentionally invalid Stripe test key placeholder."
+regexes = ['''^"sk_test_xxx:"$''']

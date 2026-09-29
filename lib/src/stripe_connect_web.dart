@@ -168,7 +168,8 @@ class StripeConnectWeb {
 
     _initCompleter?.completeError(
       Exception(
-          'Connect.js failed to load. Please add the script to your index.html'),
+        'Connect.js failed to load. Please add the script to your index.html',
+      ),
     );
     throw Exception('Connect.js failed to load');
   }
@@ -194,12 +195,21 @@ class StripeConnectWeb {
       final component = _connectInstance!.create(componentName);
       _applyCollectionOptions(component, collectionOptions);
       _applySetter(
-          component, 'setFullTermsOfServiceUrl', fullTermsOfServiceUrl?.toJS);
-      _applySetter(component, 'setRecipientTermsOfServiceUrl',
-          recipientTermsOfServiceUrl?.toJS);
+        component,
+        'setFullTermsOfServiceUrl',
+        fullTermsOfServiceUrl?.toJS,
+      );
+      _applySetter(
+        component,
+        'setRecipientTermsOfServiceUrl',
+        recipientTermsOfServiceUrl?.toJS,
+      );
       _applySetter(component, 'setPrivacyPolicyUrl', privacyPolicyUrl?.toJS);
-      _applySetter(component, 'setSkipTermsOfServiceCollection',
-          skipTermsOfServiceCollection?.toJS);
+      _applySetter(
+        component,
+        'setSkipTermsOfServiceCollection',
+        skipTermsOfServiceCollection?.toJS,
+      );
       return component;
     } catch (e) {
       debugPrint('StripeConnectWeb: Error creating component: $e');
@@ -218,7 +228,8 @@ class StripeConnectWeb {
     const setter = 'setCollectionOptions';
     if (!component.has(setter)) {
       debugPrint(
-          'StripeConnectWeb: $setter is not available on this component');
+        'StripeConnectWeb: $setter is not available on this component',
+      );
       return;
     }
 
@@ -243,7 +254,8 @@ class StripeConnectWeb {
 
     if (!component.has(setter)) {
       debugPrint(
-          'StripeConnectWeb: $setter is not available on this component');
+        'StripeConnectWeb: $setter is not available on this component',
+      );
       return;
     }
 

@@ -50,9 +50,8 @@ class WebViewConfig {
       ...?extraParams,
     };
 
-    return Uri.parse(baseUrl).replace(
-      path: componentPath,
-      queryParameters: queryParams,
-    );
+    return Uri.parse(
+      baseUrl,
+    ).replace(path: componentPath, queryParameters: queryParams);
   }
 }
