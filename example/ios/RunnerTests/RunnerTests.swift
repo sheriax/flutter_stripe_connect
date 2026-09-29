@@ -211,6 +211,14 @@ class AccountOnboardingArgumentsTests: XCTestCase {
         )
     }
 
+    func testExcludesTermsAcceptanceRequirement() {
+        let options = collectionOptions([
+            "requirements": ["exclude": ["tos_acceptance.*"]],
+        ])
+
+        XCTAssertEqual(options.requirements, .exclude(["tos_acceptance.*"]))
+    }
+
     func testKeepsTheDefaultWhenAValueIsNotOneStripeKnows() {
         let options = collectionOptions([
             "fields": "all_of_them",

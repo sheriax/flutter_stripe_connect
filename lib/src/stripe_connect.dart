@@ -132,8 +132,8 @@ class StripeConnect {
   /// [recipientTermsOfServiceUrl] - URL to your recipient terms of service
   ///   agreement.
   /// [privacyPolicyUrl] - Absolute URL to your privacy policy.
-  /// [skipTermsOfServiceCollection] - If true, onboarding skips terms of
-  ///   service collection and you must collect acceptance yourself.
+  /// [skipTermsOfServiceCollection] - Deprecated. Use
+  ///   `collectionOptions: AccountCollectionOptions(excludeTermsOfService: true)`.
   /// [onExit] - Called when the user closes the onboarding flow
   /// [onLoadError] - Called if there's an error loading the onboarding flow
   ///
@@ -154,6 +154,7 @@ class StripeConnect {
     String? fullTermsOfServiceUrl,
     String? recipientTermsOfServiceUrl,
     String? privacyPolicyUrl,
+    @Deprecated('Use AccountCollectionOptions(excludeTermsOfService: true).')
     bool? skipTermsOfServiceCollection,
     OnExitCallback? onExit,
     OnLoadErrorCallback? onLoadError,
@@ -178,7 +179,8 @@ class StripeConnect {
         if (recipientTermsOfServiceUrl != null)
           'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
         if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
-        if (skipTermsOfServiceCollection != null)
+        if (skipTermsOfServiceCollection != null &&
+            collectionOptions?.excludeTermsOfService != true)
           'skipTermsOfServiceCollection': skipTermsOfServiceCollection,
       });
     } on PlatformException catch (e) {

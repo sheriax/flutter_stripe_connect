@@ -77,8 +77,8 @@ class StripeAccountOnboarding extends StatelessWidget {
   /// Absolute URL to your privacy policy.
   final String? privacyPolicyUrl;
 
-  /// If true, onboarding skips terms of service collection and you must
-  /// collect acceptance yourself.
+  /// Deprecated. Use [AccountCollectionOptions.excludeTermsOfService] through
+  /// [collectionOptions] instead.
   final bool? skipTermsOfServiceCollection;
 
   /// If true, use WebView implementation instead of native SDK.
@@ -91,6 +91,8 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     this.onExit,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
     this.title,
@@ -98,6 +100,7 @@ class StripeAccountOnboarding extends StatelessWidget {
     this.fullTermsOfServiceUrl,
     this.recipientTermsOfServiceUrl,
     this.privacyPolicyUrl,
+    @Deprecated('Use AccountCollectionOptions(excludeTermsOfService: true).')
     this.skipTermsOfServiceCollection,
     this.useWebView = false,
   });
@@ -114,7 +117,10 @@ class StripeAccountOnboarding extends StatelessWidget {
         fullTermsOfServiceUrl: fullTermsOfServiceUrl,
         recipientTermsOfServiceUrl: recipientTermsOfServiceUrl,
         privacyPolicyUrl: privacyPolicyUrl,
-        skipTermsOfServiceCollection: skipTermsOfServiceCollection,
+        skipTermsOfServiceCollection:
+            collectionOptions?.excludeTermsOfService == true
+                ? null
+                : skipTermsOfServiceCollection,
       );
     }
 
@@ -155,7 +161,8 @@ class StripeAccountOnboarding extends StatelessWidget {
         if (recipientTermsOfServiceUrl != null)
           'recipientTermsOfServiceUrl': recipientTermsOfServiceUrl,
         if (privacyPolicyUrl != null) 'privacyPolicyUrl': privacyPolicyUrl,
-        if (skipTermsOfServiceCollection != null)
+        if (skipTermsOfServiceCollection != null &&
+            collectionOptions?.excludeTermsOfService != true)
           'skipTermsOfServiceCollection': skipTermsOfServiceCollection,
       },
     );
@@ -182,6 +189,8 @@ class StripeAccountManagement extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     this.collectionOptions,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
     this.useWebView = false,
@@ -259,6 +268,8 @@ class StripePayouts extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
     this.useWebView = false,
@@ -322,6 +333,8 @@ class StripePayments extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
     this.useWebView = false,
@@ -380,6 +393,8 @@ class StripeNotificationBanner extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });
@@ -427,6 +442,8 @@ class StripeBalances extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });
@@ -474,6 +491,8 @@ class StripeDocuments extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });
@@ -521,6 +540,8 @@ class StripeTaxSettings extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });
@@ -568,6 +589,8 @@ class StripeTaxRegistrations extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });
@@ -615,6 +638,8 @@ class StripePayoutsList extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });
@@ -667,6 +692,8 @@ class StripePaymentDetails extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     this.onClose,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
     this.paymentId,
@@ -724,6 +751,8 @@ class StripePayoutDetails extends StatelessWidget {
     this.onLoaded,
     this.onLoadError,
     this.onClose,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
     this.payoutId,
@@ -776,6 +805,8 @@ class StripeDisputesList extends StatelessWidget {
     super.key,
     this.onLoaded,
     this.onLoadError,
+    @Deprecated(
+        'Set appearance with StripeConnect.initialize or updateAppearance.')
     this.appearance,
     this.gestureRecognizers,
   });

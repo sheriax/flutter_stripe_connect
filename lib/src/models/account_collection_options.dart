@@ -55,6 +55,7 @@ class AccountCollectionOptions {
   const AccountCollectionOptions({
     this.fields = AccountFieldOption.currentlyDue,
     this.futureRequirements = AccountFutureRequirementOption.omit,
+    this.excludeTermsOfService = false,
   });
 
   /// Whether to collect `currently_due` or `eventually_due` requirements.
@@ -63,8 +64,20 @@ class AccountCollectionOptions {
   /// Whether to also collect future requirements.
   final AccountFutureRequirementOption futureRequirements;
 
+  /// Hide the terms acceptance requirement from embedded onboarding.
+  ///
+  /// Your platform must collect and record acceptance itself. Stripe's web
+  /// and iOS SDKs use the `tos_acceptance.*` requirement exclusion. On Android,
+  /// the SDK does not expose requirement restrictions to plugin callers, so
+  /// this uses its equivalent terms collection flag.
+  final bool excludeTermsOfService;
+
   Map<String, dynamic> toMap() => {
         'fields': fields.value,
         'futureRequirements': futureRequirements.value,
+        if (excludeTermsOfService)
+          'requirements': {
+            'exclude': ['tos_acceptance.*'],
+          },
       };
 }

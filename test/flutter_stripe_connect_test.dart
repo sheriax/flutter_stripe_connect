@@ -43,6 +43,7 @@ void main() {
 
       expect(map['fields'], 'currently_due');
       expect(map['futureRequirements'], 'omit');
+      expect(map.containsKey('requirements'), false);
     });
 
     test('toMap uses the values Stripe expects', () {
@@ -54,6 +55,14 @@ void main() {
 
       expect(map['fields'], 'eventually_due');
       expect(map['futureRequirements'], 'include');
+    });
+
+    test('excludes terms acceptance when the platform collects it', () {
+      const options = AccountCollectionOptions(excludeTermsOfService: true);
+
+      expect(options.toMap()['requirements'], {
+        'exclude': ['tos_acceptance.*'],
+      });
     });
   });
 

@@ -226,6 +226,11 @@ class StripeConnectWeb {
     options['fields'] = collectionOptions.fields.value.toJS;
     options['futureRequirements'] =
         collectionOptions.futureRequirements.value.toJS;
+    if (collectionOptions.excludeTermsOfService) {
+      final requirements = JSObject();
+      requirements['exclude'] = <JSString>['tos_acceptance.*'.toJS].toJS;
+      options['requirements'] = requirements;
+    }
 
     component.callMethodVarArgs(setter.toJS, [options]);
   }
