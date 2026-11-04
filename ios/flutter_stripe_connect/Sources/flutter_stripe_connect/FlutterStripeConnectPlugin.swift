@@ -1,8 +1,9 @@
 import Flutter
 import UIKit
 import StripeConnect
-@_spi(STP) import StripeCore
-@_spi(PreviewConnect) import StripeConnect
+import StripeCore
+// The account management component is still gated behind this SPI in
+// StripeConnect; every other API the plugin uses is public.
 @_spi(DashboardOnly) import StripeConnect
 
 // NOTE: Client secrets are single-use. Each fetchClientSecret call MUST return a fresh secret.

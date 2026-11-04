@@ -63,7 +63,7 @@ Add `flutter_stripe_connect` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_stripe_connect: ^0.5.0
+  flutter_stripe_connect: ^0.5.1
 ```
 
 ## Platform Setup
