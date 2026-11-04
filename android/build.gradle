@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'com.sheriax.flutter_stripe_connect'
-version '0.5.0'
+version '0.5.1'
 
 allprojects {
     repositories {
@@ -43,11 +43,11 @@ kotlin {
 
 dependencies {
     // Stripe Connect SDK
-    implementation 'com.stripe:connect:23.21.0'
+    implementation 'com.stripe:connect:23.25.1'
     
     // Coroutines for async operations
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
 
     testImplementation 'junit:junit:4.13.2'
 }

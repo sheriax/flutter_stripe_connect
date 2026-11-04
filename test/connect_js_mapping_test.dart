@@ -53,8 +53,9 @@ void main() {
         formHighlightBorder: '#999999',
       );
 
-      final variables =
-          connectAppearanceVariables(const ConnectAppearance(colors: colors));
+      final variables = connectAppearanceVariables(
+        const ConnectAppearance(colors: colors),
+      );
 
       expect(variables.length, colors.toMap().length);
       expect(variables.values.toSet(), colors.toMap().values.toSet());
@@ -63,12 +64,14 @@ void main() {
     test('gives the corner radius the pixel unit Connect.js requires', () {
       expect(
         connectAppearanceVariables(
-            const ConnectAppearance(cornerRadius: 8))['borderRadius'],
+          const ConnectAppearance(cornerRadius: 8),
+        )['borderRadius'],
         '8.0px',
       );
       expect(
         connectAppearanceVariables(
-            const ConnectAppearance(cornerRadius: 12.5))['borderRadius'],
+          const ConnectAppearance(cornerRadius: 12.5),
+        )['borderRadius'],
         '12.5px',
       );
     });
@@ -91,7 +94,7 @@ void main() {
       expect(
         {
           for (final type in StripeConnectViewType.values)
-            type: connectComponentName(type)
+            type: connectComponentName(type),
         },
         {
           StripeConnectViewType.accountOnboarding: 'account-onboarding',

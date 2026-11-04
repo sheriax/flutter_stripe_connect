@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.1
+
+* **iOS SDK** - Raise the minimum `StripeConnect` version from `26.0` to
+  `26.4` in both the podspec and `Package.swift`. 26.4.0 fixes
+  `accountOnboardingDidExit` not being called on the first automatic
+  dismissal after onboarding completes, which the `onExit` callback relies on.
+* **Fewer Private iOS APIs** - Drop the `@_spi(PreviewConnect)` and
+  `@_spi(STP)` imports. The payments and payouts components are public API
+  since StripeConnect 26.3.0. `@_spi(DashboardOnly)` stays only because the
+  SDK still gates the account management component behind it.
+* **Android SDK** - Update `com.stripe:connect` from `23.21.0` to `23.25.1`
+  and `kotlinx-coroutines` from `1.7.3` to `1.11.0`.
+* **Example** - Move to `go_router` 18, migrate the iOS project to Swift
+  Package Manager and the UIScene lifecycle, and replace the stale template
+  widget test with a home page smoke test.
+* **CI** - Pin Flutter 3.47.9, check formatting, analyze the example, and
+  build the example for web (JS and Wasm), Android, and iOS, running the
+  Kotlin and Swift bridge tests.
+
 ## 0.5.0
 
 * **WebAssembly compatibility** - Select the Connect.js implementation for

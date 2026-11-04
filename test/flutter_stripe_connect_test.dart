@@ -15,10 +15,7 @@ void main() {
       const appearance = ConnectAppearance(
         fontFamily: 'Roboto',
         cornerRadius: 8.0,
-        colors: ConnectColors(
-          primary: '#6366f1',
-          background: '#ffffff',
-        ),
+        colors: ConnectColors(primary: '#6366f1', background: '#ffffff'),
       );
 
       final map = appearance.toMap();
